@@ -1,3 +1,4 @@
+#POMODORO GUI BY SHRESTH
 from tkinter import *
 # ---------------------------- CONSTANTS ------------------------------- #
 PINK = "#e2979c"
