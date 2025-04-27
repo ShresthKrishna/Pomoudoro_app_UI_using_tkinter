@@ -39,8 +39,8 @@ A lightweight, desktop-based Pomodoro timer built with Python and Tkinter. Helps
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/ShresthKrishna/tkinter-pomodoro.git
-   cd tkinter-pomodoro
+   git clone https://github.com/ShresthKrishna/tkinter-pomodoro.git](https://github.com/ShresthKrishna/Pomoudoro_app_UI_using_tkinter.git
+   cd Pomoudoro_app_UI_using_tkinter
    ```
 
 2. **(Optional) Create and activate a virtual environment**:
