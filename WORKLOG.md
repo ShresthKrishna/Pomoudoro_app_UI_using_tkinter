@@ -4,7 +4,7 @@ Daily progress journal for the Pomodoro Productivity App.
 
 ---
 
-## 2024-04-28
+## 2025-04-28
 **Work Done:**
 - Updated README.md to reflect new project vision
 - Created CHANGELOG.md, ASK.md, WORKLOG.md templates
@@ -34,3 +34,11 @@ Daily progress journal for the Pomodoro Productivity App.
 - Refactor layout of control buttons (Start, Pause, Reset) to bottom frame horizontally.
 - Reintroduce `Work Session` label and placeholder for tomato visual.
 - Isolate and modularize timer logic.
+- 
+## 📅 2025-05-04 – Mid-Day Update
+
+- Refactored `app.py` to move all timer-related logic into `timer.py` as a class-based module.
+- Connected `TimerController` with GUI layout cleanly.
+- Implemented `Start`, `Pause`, `Resume`, and `Reset` functionalities via buttons.
+- Introduced `toggle_pause()` in `app.py` to switch Pause/Resume states with button text updates.
+- Verified correct timer flow and bug-free behavior with modular design.
