@@ -42,3 +42,35 @@ Daily progress journal for the Pomodoro Productivity App.
 - Implemented `Start`, `Pause`, `Resume`, and `Reset` functionalities via buttons.
 - Introduced `toggle_pause()` in `app.py` to switch Pause/Resume states with button text updates.
 - Verified correct timer flow and bug-free behavior with modular design.
+
+
+## 📌 Milestone – Version 1.0 (2025-05-04)
+
+- Modular architecture implemented with separation between UI (`app.py`) and logic (`timer.py`)
+- Timer logic encapsulated in `TimerController` class
+- Fully functional Start, Pause/Resume, Reset buttons
+- Toggle logic added to Pause button via `app.py`
+- All known glitches resolved (stacked timer loops, resume issue)
+- UI layout stable and styled using centralized theme
+- 
+## 🧱 Refactor Milestone — Version 2.0-alpha (2025-05-04)
+
+- Replaced `TimerController` with modular `TimerEngine`
+- Logic now decoupled from UI via clean callback functions (`update_display_cb`, `session_complete_cb`)
+- Implemented tick-loop in `app.py` using `after()` instead of internal loops
+- Enabled Pause/Resume functionality using a toggle button with internal state
+- All prior bugs resolved (timer stacking, resume not working)
+- System now testable without GUI dependencies
+
+## [2025-05-04] - Added Session Logging System
+
+**Added**
+- `logger.py` module under `pomodoro/` for centralized session logging.
+- Logging uses CSV file format for simplicity and analysis compatibility.
+- CSV file is auto-created if missing (`data/session.csv`) and includes header.
+
+**Changed**
+- Modified `session_complete_cb()` in `app.py` to call `log_session()` with session type, timestamp, and number.
+
+**Notes**
+- This lays the groundwork for the upcoming analytics dashboard.

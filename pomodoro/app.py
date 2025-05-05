@@ -1,6 +1,7 @@
 import tkinter as tk
-from pomodoro.timer import TimerController  # Importing the timer logic
-
+from pomodoro.timer_engine import TimerEngine  # Import the modular timer engine
+from datetime import datetime
+from pomodoro.logger import log_session
 # Central theme dictionary to manage styles in one place
 theme = {
     "bg_color": '#f7f5dd',
@@ -11,6 +12,7 @@ theme = {
     "timer_font": ("Courier", 36, "bold"),
     "accent_color": "#e2979c"
 }
+
 
 def run_app():
     # Set up the main application window
@@ -29,9 +31,18 @@ def run_app():
     top_frame.grid(row=0, column=0, sticky="ew", pady=10)
     top_frame.columnconfigure((0, 1, 2), weight=1)
 
-    home_btn = tk.Button(top_frame, text="Home", bg=theme["button_color"], command=lambda: show_frame("home"))
-    settings_btn = tk.Button(top_frame, text="Settings", bg=theme["button_color"], command=lambda: show_frame("settings"))
-    analytics_btn = tk.Button(top_frame, text="Analytics", bg=theme["button_color"], command=lambda: show_frame("analytics"))
+    home_btn = tk.Button(top_frame,
+                         text="Home",
+                         bg=theme["button_color"],
+                         command=lambda: show_frame("home"))
+    settings_btn = tk.Button(top_frame,
+                             text="Settings",
+                             bg=theme["button_color"],
+                             command=lambda: show_frame("settings"))
+    analytics_btn = tk.Button(top_frame,
+                              text="Analytics",
+                              bg=theme["button_color"],
+                              command=lambda: show_frame("analytics"))
 
     home_btn.grid(row=0, column=0, sticky="ew", padx=20)
     settings_btn.grid(row=0, column=1, sticky="ew", padx=20)
@@ -43,22 +54,28 @@ def run_app():
     middle_frame.rowconfigure(0, weight=1)
     middle_frame.columnconfigure(0, weight=1)
 
-    # Shared state variables
+    # Shared UI state variables
+    global timer_label
     timer_label = None
     session_type_var = tk.StringVar(value="Work")
+    session_logs = []
+
+    duration_vars = {
+        "Work": tk.IntVar(value=25),
+        "Short Break": tk.IntVar(value=5),
+        "Long Break": tk.IntVar(value=15)
+     }
 
     # Dictionary to store the different screen frames
     frames = {}
 
-    # Create each screen (home, settings, analytics)
     for screen in ("home", "settings", "analytics"):
         frame = tk.Frame(middle_frame, bg=theme["bg_color"])
         frame.grid(row=0, column=0, sticky="nsew")
-        frame.rowconfigure((0, 1, 2, 3, 4), weight=1)
+        frame.rowconfigure((0, 1, 2, 3), weight=1)
         frame.columnconfigure(0, weight=1)
 
         if screen == "home":
-            # Home screen layout: session dropdown, timer label, session label
             tk.Label(frame, text="Session Type", bg=theme["bg_color"], font=theme["label_font"]).grid(
                 row=0, column=0, sticky="w", padx=20, pady=5
             )
@@ -73,13 +90,41 @@ def run_app():
             session_label = tk.Label(frame, text="Work Session 1", font=theme["label_font"], bg=theme["bg_color"])
             session_label.grid(row=3, column=0, pady=5)
 
+
         elif screen == "settings":
-            options = ["Work Duration (min)", "Break Duration (min)", "Long Break Frequency"]
-            for i, label_text in enumerate(options):
-                tk.Label(frame, text=label_text, font=theme["label_font"], bg=theme["bg_color"]).grid(
-                    row=i, column=0, pady=5, sticky="w", padx=20
+
+            # Make both columns grow evenly
+            frame.columnconfigure((0, 1), weight=1)
+            settings_box = tk.LabelFrame(frame, text="Customize Durations", font=theme["label_font"],
+                                         bg=theme["bg_color"], bd=2)
+            settings_box.grid(row=0, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+            settings_box.columnconfigure((0, 1), weight=1)
+
+            labels = {
+                "Work": "Work Duration (min)",
+                "Short Break": "Break Duration (min)",
+                "Long Break": "Long Break Duration (min)"  # renamed for clarity
+            }
+
+            for i, key in enumerate(labels):
+                # Label column
+                tk.Label(settings_box, text=labels[key], font=theme["label_font"], bg=theme["bg_color"],fg="black").grid(
+                    row=i, column=0, padx=10, pady=10, sticky="w"
                 )
-                tk.Spinbox(frame, from_=1, to=60, width=5).grid(row=i, column=1, padx=10, pady=5)
+                # Spinbox column
+                tk.Spinbox(
+                    settings_box,
+                    from_=1, to=60,
+                    textvariable=duration_vars[key],
+                    font=theme["label_font"],
+                    width=8
+                ).grid(row=i, column=1, padx=10, pady=10, sticky="e", ipady=3)
+
+            # Save Settings button (placeholder)
+
+            save_btn = tk.Button(
+                frame, text="Save Settings", bg=theme["accent_color"], font=theme["button_font"])
+            save_btn.grid(row=1, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
 
         elif screen == "analytics":
             tk.Label(frame, text="Your productivity trend will appear here!",
@@ -87,33 +132,73 @@ def run_app():
 
         frames[screen] = frame
 
-    # Create an instance of the timer logic class
-    timer = TimerController(root, timer_label, session_type_var)
+    # Callback: updates the timer label every second
+    def update_display_cb(mins, secs):
+        timer_label.config(text=f"{mins:02d}:{secs:02d}")
+
+    # Callback: handles session completion and switching
+    def session_complete_cb(prev_session, count):
+        completed_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        session_logs.append({
+            "type": prev_session,
+            "completed_at": completed_at,
+            "session_number": count
+        })
+        if prev_session == "Work":
+            next_session = "Long Break" if count % 4 == 0 else "Short Break"
+        else:
+            next_session = "Work"
+        log_session(prev_session, completed_at, count)
+        session_type_var.set(next_session)
+        timer_engine.start(next_session)
+
+    # Instantiate the timer engine
+    timer_engine = TimerEngine(
+        update_display_cb,
+        session_complete_cb,
+        {key: duration_vars[key].get() * 60 for key in duration_vars}
+    )
+    # Set up the recurring tick loop
+
+    def tick_loop():
+        timer_engine.tick()
+        root.after(1000, tick_loop)
+
+    tick_loop()
+
+    is_paused = False
+
+    def toggle_pause():
+        nonlocal is_paused
+        if is_paused:
+            timer_engine.resume()
+            pause_btn.config(text="Pause")
+            is_paused = False
+        else:
+            timer_engine.pause()
+            pause_btn.config(text="Resume")
+            is_paused = True
 
     # Bottom control panel with Start / Pause / Reset buttons
     bottom_frame = tk.Frame(root, bg=theme["bg_color"])
     bottom_frame.grid(row=2, column=0, sticky="ew", pady=10)
     bottom_frame.columnconfigure((0, 1, 2), weight=1)
 
-    is_paused = False  # Toggle flag
-
-    def toggle_pause():
-        nonlocal is_paused
-        if is_paused:
-            timer.resume()
-            pause_btn.config(text="Pause")
-            is_paused = False
-        else:
-            timer.pause()
-            pause_btn.config(text="Resume")
-            is_paused = True
-
-    start_btn = tk.Button(bottom_frame, text="Start", bg=theme["accent_color"], font=theme["button_font"],
-                          command=timer.start_countdown)
+    start_btn = tk.Button(bottom_frame,
+                          text="Start",
+                          bg=theme["accent_color"],
+                          font=theme["button_font"],
+                          command=lambda: (
+                              timer_engine.update_durations(
+                                  {key: duration_vars[key].get() * 60 for key in duration_vars}),
+                              timer_engine.start(session_type_var.get())
+                          )
+                          )
     pause_btn = tk.Button(bottom_frame, text="Pause", bg=theme["button_color"], font=theme["button_font"],
                           command=toggle_pause)
+
     reset_btn = tk.Button(bottom_frame, text="Reset", bg=theme["button_color"], font=theme["button_font"],
-                          command=timer.reset)
+                          command=timer_engine.reset)
 
     start_btn.grid(row=0, column=0, padx=10, sticky="ew")
     pause_btn.grid(row=0, column=1, padx=10, sticky="ew")

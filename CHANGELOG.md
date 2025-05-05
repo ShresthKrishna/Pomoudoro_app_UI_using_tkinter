@@ -24,3 +24,40 @@ All notable changes to this project will be documented here.
 
 ### Fixed
 - Prevented multiple countdown overlaps by checking `self.timer_id` before starting.
+## [v1.0] - 2025-05-04
+
+### Added
+- `timer.py` with `TimerController` class to encapsulate countdown logic
+- Button wiring and toggle logic for Pause/Resume
+- Dynamic UI layout using `grid()` and centralized `theme` dictionary
+
+### Fixed
+- Timer glitch when pressing Start multiple times
+- Resume function not responding due to missing toggle behavior
+
+## [v2.0-alpha] - 2025-05-04
+
+### Changed
+- Replaced `TimerController` with `TimerEngine` class in `timer_engine.py`
+- Moved timer loop control out of logic class into `app.py` via `after()`
+
+### Added
+- Callback system to update UI and handle session transitions
+- Toggle Pause/Resume button with internal `is_paused` flag
+
+### Fixed
+- Bug: resume functionality wasn't working
+- Bug: Start button stacking multiple countdown instances
+
+## [2025-05-04] - Added Session Logging System
+
+### Added
+- `logger.py` module under `pomodoro/` for centralized session logging.
+- Logging uses CSV file format for simplicity and analysis compatibility.
+- CSV file is auto-created if missing (`data/session.csv`) and includes header.
+
+### Changed
+- Modified `session_complete_cb()` in `app.py` to call `log_session()` with session type, timestamp, and number.
+
+### Notes
+- This lays the groundwork for the upcoming analytics dashboard.
