@@ -3,15 +3,7 @@ from pomodoro.timer_engine import TimerEngine  # Import the modular timer engine
 from datetime import datetime
 from pomodoro.logger import log_session
 # Central theme dictionary to manage styles in one place
-theme = {
-    "bg_color": '#f7f5dd',
-    "button_color": "#9bdeac",
-    "font_name": "Courier",
-    "button_font": ("Courier", 12, "bold"),
-    "label_font": ("Courier", 14),
-    "timer_font": ("Courier", 36, "bold"),
-    "accent_color": "#e2979c"
-}
+from pomodoro.theme import theme
 
 
 def run_app():
@@ -59,6 +51,7 @@ def run_app():
     timer_label = None
     session_type_var = tk.StringVar(value="Work")
     session_logs = []
+    session_start_time = None
 
     duration_vars = {
         "Work": tk.IntVar(value=25),
@@ -132,23 +125,28 @@ def run_app():
 
         frames[screen] = frame
 
+
+
     # Callback: updates the timer label every second
     def update_display_cb(mins, secs):
         timer_label.config(text=f"{mins:02d}:{secs:02d}")
 
     # Callback: handles session completion and switching
     def session_complete_cb(prev_session, count):
-        completed_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        nonlocal session_start_time
+        completed_at = datetime.now()
+        duration_minutes = round((completed_at - session_start_time).total_seconds() / 60 if session_start_time else 0)
         session_logs.append({
             "type": prev_session,
-            "completed_at": completed_at,
-            "session_number": count
+            "completed_at": completed_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "session_number": count,
+            "duration_minutes" : duration_minutes
         })
         if prev_session == "Work":
             next_session = "Long Break" if count % 4 == 0 else "Short Break"
         else:
             next_session = "Work"
-        log_session(prev_session, completed_at, count)
+        log_session(prev_session, completed_at, count, duration_minutes)
         session_type_var.set(next_session)
         timer_engine.start(next_session)
 
@@ -178,6 +176,12 @@ def run_app():
             timer_engine.pause()
             pause_btn.config(text="Resume")
             is_paused = True
+
+    def start_session():
+        nonlocal session_start_time
+        session_start_time = datetime.now()
+        timer_engine.update_durations({key: duration_vars[key].get()*60 for key in duration_vars})
+        session_type_var.get()
 
     # Bottom control panel with Start / Pause / Reset buttons
     bottom_frame = tk.Frame(root, bg=theme["bg_color"])

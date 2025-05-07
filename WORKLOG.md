@@ -92,3 +92,20 @@ Daily progress journal for the Pomodoro Productivity App.
 **Next Steps:**
 - Begin visual integration of analytics output into Analytics screen
 - Connect computed summaries to UI components and dashboards
+
+## 📅 2025-05-07
+
+### 🧱 Refactored:
+- Extracted `render_analytics_screen()` from `app.py` into a new modular file: `screens/analytics_screen.py`
+- Created `screens/` directory to house modular UI definitions for each screen
+- This change aligns with our earlier modularization (e.g., `timer_engine.py`) and keeps `app.py` clean and maintainable
+
+## 📅 2025-05-07 (Midday Log)
+
+### 🧱 Refactored:
+- Moved the global `theme` dictionary out of `app.py` and into a new module: `pomodoro/theme.py`
+- All GUI modules now access it via: `from pomodoro.theme import theme`
+- This ensures a single source of truth for UI styling, improves modularity, and avoids circular imports
+
+### 🧩 Planned:
+- `theme_manager.py` will be used in a later phase to support dynamic theming (e.g., Light/Dark mode, persistent settings)
