@@ -4,6 +4,8 @@ from datetime import datetime
 from pomodoro.logger import log_session
 # Central theme dictionary to manage styles in one place
 from pomodoro.theme import theme
+from screens.analytics_screen import render_analytics_screen
+
 
 
 def run_app():
@@ -26,14 +28,17 @@ def run_app():
     home_btn = tk.Button(top_frame,
                          text="Home",
                          bg=theme["button_color"],
+                         font=theme["button_font"],
                          command=lambda: show_frame("home"))
     settings_btn = tk.Button(top_frame,
                              text="Settings",
+                             font=theme["button_font"],
                              bg=theme["button_color"],
                              command=lambda: show_frame("settings"))
     analytics_btn = tk.Button(top_frame,
                               text="Analytics",
                               bg=theme["button_color"],
+                              font=theme["button_font"],
                               command=lambda: show_frame("analytics"))
 
     home_btn.grid(row=0, column=0, sticky="ew", padx=20)
@@ -120,9 +125,7 @@ def run_app():
             save_btn.grid(row=1, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
 
         elif screen == "analytics":
-            tk.Label(frame, text="Your productivity trend will appear here!",
-                     font=theme["label_font"], bg=theme["bg_color"]).grid(row=0, column=0, pady=20)
-
+            render_analytics_screen(frame)
         frames[screen] = frame
 
 
