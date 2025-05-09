@@ -5,7 +5,7 @@ from pomodoro.logger import log_session
 # Central theme dictionary to manage styles in one place
 from pomodoro.theme import theme
 from screens.analytics_screen import render_analytics_screen
-
+from utils.storage import save_user_settings, load_user_settings
 
 
 def run_app():
@@ -57,6 +57,7 @@ def run_app():
     session_type_var = tk.StringVar(value="Work")
     session_logs = []
     session_start_time = None
+    use_mock_data = True
 
     duration_vars = {
         "Work": tk.IntVar(value=25),
@@ -64,18 +65,36 @@ def run_app():
         "Long Break": tk.IntVar(value=15)
      }
 
+    def on_save_settings():
+        save_user_settings({
+            "Work": duration_vars["Work"].get(),
+            "Short Break": duration_vars["Short Break"].get(),
+            "Long Break": duration_vars["Long Break"].get()
+        })
+        timer_engine.update_durations({
+            key: duration_vars[key].get() * 60 for key in duration_vars
+        })
+
+    saved_settings = load_user_settings()
+    for key in duration_vars:
+        if key in saved_settings:
+            duration_vars[key].set(saved_settings[key])
     # Dictionary to store the different screen frames
     frames = {}
 
     for screen in ("home", "settings", "analytics"):
         frame = tk.Frame(middle_frame, bg=theme["bg_color"])
         frame.grid(row=0, column=0, sticky="nsew")
-        frame.rowconfigure((0, 1, 2, 3), weight=1)
+        # frame.rowconfigure((0, 1, 2, 3), weight=1)
+        if screen == "analytics":
+            frame.rowconfigure(0, weight=1)  # analytics uses just 1 row
+        else:
+            frame.rowconfigure((0, 1, 2, 3), weight=1)  # home/settings use 4 rows
         frame.columnconfigure(0, weight=1)
 
         if screen == "home":
             tk.Label(frame, text="Session Type", bg=theme["bg_color"], font=theme["label_font"]).grid(
-                row=0, column=0, sticky="w", padx=20, pady=5
+                row=0, column=0, sticky="ew", padx=20, pady=5
             )
 
             tk.OptionMenu(frame, session_type_var, "Work", "Short Break", "Long Break").grid(
@@ -87,7 +106,6 @@ def run_app():
 
             session_label = tk.Label(frame, text="Work Session 1", font=theme["label_font"], bg=theme["bg_color"])
             session_label.grid(row=3, column=0, pady=5)
-
 
         elif screen == "settings":
 
@@ -101,7 +119,7 @@ def run_app():
             labels = {
                 "Work": "Work Duration (min)",
                 "Short Break": "Break Duration (min)",
-                "Long Break": "Long Break Duration (min)"  # renamed for clarity
+                "Long Break": "Long Break Duration (min)"
             }
 
             for i, key in enumerate(labels):
@@ -121,14 +139,15 @@ def run_app():
             # Save Settings button (placeholder)
 
             save_btn = tk.Button(
-                frame, text="Save Settings", bg=theme["accent_color"], font=theme["button_font"])
+                frame, text="Save Settings",
+                bg=theme["accent_color"],
+                font=theme["button_font"],
+                command= on_save_settings)
             save_btn.grid(row=1, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
 
         elif screen == "analytics":
-            render_analytics_screen(frame)
+            render_analytics_screen(frame, use_mock=use_mock_data)
         frames[screen] = frame
-
-
 
     # Callback: updates the timer label every second
     def update_display_cb(mins, secs):
@@ -179,12 +198,6 @@ def run_app():
             timer_engine.pause()
             pause_btn.config(text="Resume")
             is_paused = True
-
-    def start_session():
-        nonlocal session_start_time
-        session_start_time = datetime.now()
-        timer_engine.update_durations({key: duration_vars[key].get()*60 for key in duration_vars})
-        session_type_var.get()
 
     # Bottom control panel with Start / Pause / Reset buttons
     bottom_frame = tk.Frame(root, bg=theme["bg_color"])

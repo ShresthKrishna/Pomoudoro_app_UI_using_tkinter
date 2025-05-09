@@ -1,7 +1,9 @@
 import pandas as pd
 from pathlib import Path
 from datetime import datetime, timedelta
-from pomodoro.mock_data import get_mock_summary_data
+from pomodoro.mock_data import get_mock_summary_data, get_mock_session_rows
+from typing import List, Dict, Union
+
 
 DEFAULT_LOG_PATH = Path('data') / 'session.csv'
 
@@ -83,6 +85,19 @@ def summarize_recent_days(df: pd.DataFrame, n=7) -> pd.DataFrame:
 
     summary = filtered.groupby(["date", "type"]).size().reset_index(name="count")
     return summary[["date", "type", "count"]].sort_values("date")
+
+def get_recent_sessions(n=20, use_mock=False) -> List[Dict[str, Union[str, int]]]:
+    if use_mock:
+        return get_mock_session_rows()[:n]
+    df = read_sessions()
+    if df.empty:
+        return []
+    df = df.copy()
+    if "task" not in df.columns:
+        df["task"] = ""
+
+    df = df.sort_values("completed_at", ascending=False)
+    return df.head(n).to_dict(orient="records")
 
 
 def generate_all_summaries(df=None, use_mock=False):

@@ -33,3 +33,11 @@ def get_mock_summary_data():
         "streaks": streaks,
         "recent": recent
     }
+def get_mock_session_rows():
+    return [
+        {"session_number": 1, "type": "Work", "completed_at": "2025-05-01 10:30", "duration_minutes": 25, "task": "Write Report"},
+        {"session_number": 2, "type": "Short Break", "completed_at": "2025-05-01 10:55", "duration_minutes": 5, "task": ""},
+        {"session_number": 3, "type": "Work", "completed_at": "2025-05-01 11:00", "duration_minutes": 25, "task": "Debug UI"},
+        {"session_number": 4, "type": "Long Break", "completed_at": "2025-05-01 11:30", "duration_minutes": 15, "task": ""},
+        {"session_number": 5, "type": "Work", "completed_at": "2025-05-02 09:00", "duration_minutes": 25, "task": "Email Review"},
+    ]
