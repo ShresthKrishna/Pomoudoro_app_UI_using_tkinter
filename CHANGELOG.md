@@ -61,3 +61,33 @@ All notable changes to this project will be documented here.
 
 ### Notes
 - This lays the groundwork for the upcoming analytics dashboard.
+
+## [2025-05-09] - Scrollable Analytics Layout Implemented
+
+### Added
+- `analytics_screen.py`: Full vertical scroll implementation using Canvas + Frame
+- Dynamic row placement for each analytics block: Bar, Pie, Cards, Chart, Treeview
+- Fallback message added to Treeview when session list is empty
+
+### Changed
+- `app.py`: Added `use_mock` flag and passed it into `render_analytics_screen`
+- UI frame structure adjusted to support expandable scrollable views
+
+### Fixed
+- Broken scroll behavior where canvas remained in a confined area
+- Scrollbar now properly responds to window resizing and content height
+
+## [2025-05-10] - Session Tracking Logic Refactor
+
+### Changed
+- Replaced global session counting with per-type session counters
+- Long Break trigger logic now based on actual Work sessions completed
+
+### Fixed
+- Incorrect session label display (was showing Short Break Session 2 as first break)
+- Long Breaks not appearing at all due to faulty modulo logic
+
+### Added
+- `session_counts` dictionary
+- `work_sessions_completed` tracker
+- Updated `reset_session()` to clean internal counters and labels

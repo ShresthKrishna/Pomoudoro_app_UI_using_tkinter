@@ -41,3 +41,41 @@
 
 ### To Revisit
 - Once analytics is live, validate whether the logger output aligns with charts and summaries.
+
+### 🐞 [May 9, 2025] – Scroll Area Not Expanding
+
+- **Issue**: Analytics screen scrollbar worked, but canvas height was stuck in a small container. User couldn’t see full visualizations.
+- **Symptoms**:
+  - Treeview was hidden
+  - Resizing the window had no effect
+- **Root Cause**:
+  - `canvas.create_window()` not bound to `event.width`
+  - `parent_frame.rowconfigure()` missing weight for canvas expansion
+- **Fix (by partner)**:
+  - Bound canvas width using `canvas.itemconfig()` on `<Configure>`
+  - Updated layout weights and grid logic
+  - Confirmed scroll works end-to-end across all analytics sections
+
+### 🐞 [May 10, 2025] – Session Label Count Bug & Long Break Logic
+
+**Issue 1:**
+- Session label incorrectly displayed global count (e.g., "Short Break Session 2" on first break)
+
+**Root Cause:**
+- Was using `timer_engine.completed_session`, which counts every session, not per-type
+
+**Fix:**
+- Introduced `session_counts` dictionary to track session numbers per type
+- Updated session label logic in both Start and Complete callbacks
+
+---
+
+**Issue 2:**
+- Long Break never triggered
+
+**Root Cause:**
+- Logic was based on global `completed_session` which included breaks
+
+**Fix:**
+- Added `work_sessions_completed` counter
+- Long Break now triggers every 4 Work sessions

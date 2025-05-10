@@ -60,3 +60,5 @@ class TimerEngine:
         self.completed_session = 0
         self.session_type = "Work"
         self.update_display_cb(0, 0)
+
+

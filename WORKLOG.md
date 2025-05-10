@@ -109,3 +109,47 @@ Daily progress journal for the Pomodoro Productivity App.
 
 ### 🧩 Planned:
 - `theme_manager.py` will be used in a later phase to support dynamic theming (e.g., Light/Dark mode, persistent settings)
+## 📅 2025-05-09
+
+### ✅ Analytics Screen – Scrollable Layout Finalization
+
+**Work Done:**
+- Debugged the broken scrolling layout in `analytics_screen.py` with external help (partner).
+- Implemented a `Canvas + Scrollbar + Frame` structure that now scrolls the full Analytics screen vertically.
+- Bound the width of the scroll window dynamically to match canvas resize.
+- Corrected layout hierarchy and `rowconfigure` settings to allow frame expansion.
+- Converted placeholder debug layout into a working version with:
+  - Sessions per Day bar chart
+  - Time Distribution pie chart
+  - Streak metrics
+  - 7-Day Activity overview
+  - Session History viewer (Treeview)
+
+**Decisions Made:**
+- Scrollable layout will be the default Analytics mode until full-screen dashboard layout is ready.
+- Toggle logic will be added in v1.3.x for switching between dashboard vs scroll mode.
+- `use_mock` now propagated cleanly from `app.py` for consistent data display.
+
+**Next Steps:**
+- Freeze layout for scrollable analytics
+- Begin planning dashboard mode toggle
+
+## 📅 2025-05-10
+
+### ✅ Session Label Fix + Per-Type Session Tracking
+
+**Work Done:**
+- Added dynamic session labeling (`Work Session 1`, etc.) using per-type counters
+- Introduced `session_counts` dictionary to track number of each session type
+- Added `work_sessions_completed` to correctly trigger Long Break after every 4 Work sessions
+- Updated Start and Complete callbacks to reflect new session label format
+- Updated `reset_session()` to clear all counters and labels
+
+**Decisions Made:**
+- Session number in label is now per-type, not global
+- Logging session_number now uses accurate per-type count (via `session_counts`)
+- Analytics backend does not need changes, but logger behavior was adjusted
+
+**Next Steps:**
+- Style polish for Treeview in Session History Viewer
+- Begin `v1.3` dashboard layout (brick wall style)
