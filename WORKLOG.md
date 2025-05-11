@@ -109,3 +109,22 @@ Daily progress journal for the Pomodoro Productivity App.
 
 ### 🧩 Planned:
 - `theme_manager.py` will be used in a later phase to support dynamic theming (e.g., Light/Dark mode, persistent settings)
+
+## 📅 2025-05-11
+
+**Work Done:**
+- Reviewed faulty external implementation of analytics layout toggle
+- Rebuilt `render_analytics_screen()` to dynamically switch between scroll and dashboard layout
+- Finalized brick-wall dashboard layout (`render_dashboard_layout`) with correct section grid placement
+- Repaired scrollable layout with working scrollbar, mousewheel bindings, dynamic `scrollregion`
+- Validated canvas resizing and element rendering across modes
+
+**Decisions Made:**
+- Toggle based on `parent_frame.winfo_width() >= 900` is sufficient for switching
+- Will continue refining visuals, but layout logic is now milestone-complete
+
+**Next Steps:**
+- Begin task label selector (v1.3)
+- Apply Treeview styling polish
+- Explore user toggles in Settings for layout preference
+"""

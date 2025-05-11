@@ -41,3 +41,19 @@
 
 ### To Revisit
 - Once analytics is live, validate whether the logger output aligns with charts and summaries.
+
+
+### 🐞 [May 11, 2025] – Scroll & Layout Toggle Discrepancy
+
+**Issue**:
+- Alternate version of `analytics_screen.py` added layout toggle between scroll and dashboard mode, but broke agreed GUI structure.
+- Scrollbar existed but did not work — canvas height never expanded, scrollregion never updated.
+
+**Fix**:
+- Reimplemented scroll layout using correct `Canvas + Frame + Scrollbar` structure.
+- Used `create_window()` and width binding.
+- Reintegrated `render_scrollable_layout()` and `render_dashboard_layout()` with proper toggle logic via `parent_frame.winfo_width()`.
+
+**Status**:
+✅ Fixed. Dynamic switching works cleanly. Both layouts follow design structure.
+"""

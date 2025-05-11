@@ -61,3 +61,15 @@ All notable changes to this project will be documented here.
 
 ### Notes
 - This lays the groundwork for the upcoming analytics dashboard.
+
+## [2025-05-11] - Layout System Stabilization & Analytics Toggle Integration
+
+### Added
+- Scroll vs Dashboard toggle inside `render_analytics_screen()` using screen width detection
+- `render_dashboard_layout()` now uses correct grid layout (brick wall style)
+- Scroll layout uses canvas, scrollbar, dynamic region binding
+
+### Fixed
+- Scrollbar not working in third-party version due to incorrect window configuration
+- Analytics layout now stable across screen sizes with automatic switching
+"""
