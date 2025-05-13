@@ -128,3 +128,77 @@ Daily progress journal for the Pomodoro Productivity App.
 - Apply Treeview styling polish
 - Explore user toggles in Settings for layout preference
 """
+- ## 📅 2025-05-12
+
+**Work Done:**
+- Finalized Task Selector upgrade to a new **Task Plan** layout with session goal support.
+- Added two fields: `task_var` (StringVar) and `task_session_goal` (IntVar), placed within a "Task Plan" LabelFrame on Home screen.
+- Ensured UI layout harmony by slotting Task Plan into row 5 between the session label and control buttons.
+- Designed the internal grid with labels and input fields for Task Name and # of Sessions, using ttk.Entry and ttk.Spinbox respectively.
+- Decided that `task_var` and session goal will persist until manually changed or depleted.
+- Chose not to alter logger schema — session log continues to log each Work session with the task active at that time.
+
+**Decisions Made:**
+- Auto-clearing the task field after each session was dropped in favor of letting users plan how many Pomodoros a task should last.
+- Logger will not track the planned session count — only actual completed sessions per task.
+- Task field remains free-form (`ttk.Entry`) for now; dropdowns and saved task lists may come in v1.5.
+
+**Next Steps:**
+- Notify Code Chat to wire up `task_sessions_remaining` logic:
+  - On Start: capture task + session count.
+  - On each Work session complete: decrement.
+  - If counter hits 0 → clear task_var and session goal.
+- Prepare for upcoming Treeview visual polish and task-aware analytics grouping.
+
+## 📅 2025-05-13
+
+**Work Done:**
+- Implemented full Task Plan logic in `app.py`:
+  - `task_var` and `task_session_goal` added as shared state
+  - On Start, task name and number of sessions are captured
+  - `current_task` and `task_session_remaining` tracked internally
+  - After each Work session, task is logged and counter decremented
+  - Task fields auto-clear when planned session count is exhausted
+- Integrated into session lifecycle without altering logger structure
+- Verified correct behavior across session switches (Work → Break → Work)
+
+**Decisions Made:**
+- Task and session goal fields persist between sessions by default
+- Task name is only logged during Work sessions
+- Field-clearing occurs only after planned Pomodoros complete
+- Short/Long Breaks log an empty task by design
+
+**Next Steps:**
+- Notify Analytics Team that `task` values are now available in real logs
+- Begin Treeview visual polish for the Analytics screen
+- Add optional setting to remember last task name across app sessions
+
+## 📅 2025-05-13 (End-of-Day)
+
+**Work Done:**
+- Fully integrated Task Plan logic in `app.py`:
+  - Task name (`task_var`) and session goal (`task_session_goal`) inputs now operational.
+  - Session logging seamlessly integrated; tasks auto-clear after reaching planned session count.
+  - Ensured backward compatibility—no logger schema changes needed.
+- Finalized Dashboard Analytics structure for clarity:
+  - Introduced a 7-Day Activity Overview (line chart) replacing stacked bars for clearer trends.
+  - Implemented placeholders for task-specific overlays and future interactivity.
+- Completed a refined placeholder dashboard structure with precise `.grid()` placement:
+  - `task_freq` spans multiple rows to match height visually.
+  - Verified smooth toggle between scrollable and dashboard modes.
+
+**Tech Enhancements:**
+- Added `draw_line_chart()` to `charts.py` for multi-line trend visualizations.
+- Expanded analytics summarizers:
+  - `summarize_daily_by_type()` and `summarize_daily_for_tasks()` added.
+- Enhanced mock data to fully support task analytics.
+
+**Decisions Made:**
+- Confirmed layout structure optimized for task analytics and visual hierarchy.
+- Task field resets only upon reaching the specified session goal.
+
+**Next Steps:**
+- Add interactive task-selection dropdown for trend overlays.
+- Complete visual polish for Treeview (spacing, colors, tooltips).
+- Discuss and implement persistent task memory (most recent task name).
+- Enable mock-to-real data toggling in analytics.
