@@ -1,0 +1,18 @@
+type,completed_at,session_number,duration_minutes,task
+Work,2025-05-13 00:44:40,1,0,Trial
+Short Break,2025-05-13 00:44:41,1,0,
+Work,2025-05-13 00:44:42,2,0,Trial
+Short Break,2025-05-13 00:44:43,2,0,
+Work,2025-05-13 00:44:44,3,0,Trial
+Short Break,2025-05-13 00:44:45,3,0,
+Work,2025-05-13 00:44:46,4,0,Trial
+Long Break,2025-05-13 00:44:47,1,0,
+Work,2025-05-13 00:44:48,5,0,Trial
+Short Break,2025-05-13 00:44:48,4,0,
+Work,2025-05-13 00:44:49,6,0,Trial
+Short Break,2025-05-13 00:44:50,5,0,
+Work,2025-05-13 00:44:51,7,0,Trial
+Short Break,2025-05-13 00:44:52,6,0,
+Work,2025-05-13 00:44:53,8,0,Trial
+Long Break,2025-05-13 00:44:54,2,0,
+Work,2025-05-13 00:44:55,9,0,

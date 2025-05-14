@@ -11,5 +11,5 @@ theme = {
     "chart_size_wide": (6, 2.5),
     "treeview_row_height": 24,
     "default_colormap": "Pastel1",
-    "chart_padding": {"padx": 20, "pady": 10}
+    "chart_padding": (20, 10)
 }
