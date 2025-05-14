@@ -202,3 +202,31 @@ Daily progress journal for the Pomodoro Productivity App.
 - Complete visual polish for Treeview (spacing, colors, tooltips).
 - Discuss and implement persistent task memory (most recent task name).
 - Enable mock-to-real data toggling in analytics.
+
+## 📅 2025-05-14
+
+**Work Done:**
+- Completed full implementation of final v1.3 dashboard layout:
+  - Refined 3×4 grid with clear separation of task analytics, usage trends, streaks, and session history.
+  - Adjusted `rowconfigure` and `columnconfigure` weights for visual hierarchy.
+  - `Task Frequency` chart now spans two rows to balance height with surrounding visuals.
+- Implemented new `7-Day Activity Overview` using `draw_line_chart()`:
+  - Shows trends of Work, Short Break, and Long Break across the last 7 days.
+  - Dropdown added to overlay task-specific trends using `summarize_daily_for_tasks()`.
+- Updated scrollable layout to match new line chart and task interactivity.
+- Enhanced `charts.py` with `draw_line_chart()` utility:
+  - Multi-line support, clear legends, gridlines, responsive labels.
+- Expanded `mock_data.py` to include:
+  - Mock `per_task_time`, `task_frequency`, `daily_by_type` for all chart previews.
+- Verified `use_mock=True` compatibility across all modules.
+
+**Decisions Made:**
+- Final dashboard layout approved and locked for v1.3
+- Blitting enabled for smoother chart rendering
+- Streak cards and chart font sizes made consistent with theme
+
+**Next Steps:**
+- Begin v1.4 milestone:
+  - Trend overlay for multiple tasks
+  - Treeview polish (tooltips, colors, column width)
+  - Optional: persistent task tracking

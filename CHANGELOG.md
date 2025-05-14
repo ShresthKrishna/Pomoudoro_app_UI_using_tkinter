@@ -121,3 +121,22 @@ All notable changes to this project will be documented here.
 **Fixed:**
 - Ensured session logging schema compatibility (no breaking changes).
 - Verified seamless layout-toggle logic based on screen width.
+
+## [2025-05-14] - v1.3 Final Dashboard Layout & Task Analytics Integration
+
+**Added:**
+- Line chart: 7-Day Activity Overview (session type trends)
+- Dropdown for task trend overlay using `summarize_daily_for_tasks()`
+- Task analytics visuals:
+  - Top Tasks by Time (bar)
+  - Task Frequency Breakdown (pie)
+- `draw_line_chart()` function in `charts.py` for reusable multi-line trends
+
+**Changed:**
+- Finalized 3×4 dashboard layout with improved grid placement
+- `Task Frequency` chart now spans 2 rows for visual balance
+- Scrollable layout updated to match dashboard structure and interactivity
+
+**Fixed:**
+- All charts now handle empty/mock data cleanly
+- Ensured layout toggle between scrollable and dashboard is seamless

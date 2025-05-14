@@ -53,9 +53,12 @@ def run_app():
     session_label = None
     session_type_var = tk.StringVar(value="Work")
     task_var = tk.StringVar(value="")
+    task_session_goal = tk.IntVar(value=1)
     session_counts = {"Work": 0, "Short Break": 0, "Long Break": 0}
     session_start_time = None
     use_mock_data = True
+    current_task = ""
+    task_session_remaining = 0
 
     duration_vars = {
         "Work": tk.IntVar(value=25),
@@ -86,7 +89,7 @@ def run_app():
         if screen == "analytics":
             frame.rowconfigure(0, weight=1)
         else:
-            frame.rowconfigure((0, 1, 2, 3, 4), weight=1)
+            frame.rowconfigure((0, 1, 2, 3, 4,5), weight=1)
         frame.columnconfigure(0, weight=1)
 
         if screen == "home":
@@ -124,6 +127,27 @@ def run_app():
                 task_frame, textvariable=task_var,
                 font=theme["label_font"]
             ).grid(row=0, column=0, sticky="ew", padx=10, pady=5)
+
+            # Task Plan
+            task_plan_frame = tk.LabelFrame(
+                frame, text="Task Plan",
+                font = theme["label_font"],
+                bg=theme["bg_color"]
+            )
+            task_plan_frame.grid(row=5, column=0, sticky="ew", padx=20, pady=(5, 10))
+            task_plan_frame.columnconfigure(0, weight=1)
+
+            tk.Label(task_plan_frame,
+                     text="Planned Work Sessions:",
+                     font=theme["label_font"],
+                     bg=theme["bg_color"]).grid(row=0, column=0, sticky="w",
+                                                padx=10, pady=5)
+
+            tk.Spinbox(task_plan_frame,
+                       from_=1, to=10,
+                       textvariable = task_session_goal,
+                       font=theme["label_font"],
+                       width=5).grid(row=0, column=1, sticky="w", padx=10, pady=5)
 
         elif screen == "settings":
             frame.columnconfigure((0, 1), weight=1)
@@ -167,12 +191,25 @@ def run_app():
 
     # Session completion handler
     def session_complete_cb(prev_session, _):
-        nonlocal session_start_time
+        nonlocal session_start_time, current_task, task_session_remaining
         completed_at = datetime.now()
         duration = round((completed_at - session_start_time).total_seconds() / 60)
 
         # Increment count for prev_session
         session_counts[prev_session] += 1
+
+        if prev_session == "Work" and current_task:
+            task_session_remaining -=1
+            log_session(prev_session, completed_at, session_counts[prev_session],
+                        duration, current_task)
+        else:
+            log_session(prev_session, completed_at, session_counts[prev_session],
+                        duration, "")
+
+        if task_session_remaining == 0:
+            task_var.set("")
+            task_session_goal.set(1)
+            current_task = ""
 
         # Determine next session type
         if prev_session == "Work":
@@ -189,17 +226,6 @@ def run_app():
             text=f"{next_sess} Session {session_counts[next_sess] + 1}"
         )
 
-        # Log to CSV
-        task_name = task_var.get().strip()
-        log_session(
-            prev_session,
-            completed_at,
-            session_counts[prev_session],
-            duration,
-            task=task_name
-        )
-        task_var.set("")
-
         # Start next session
         session_start_time = datetime.now()
         session_type_var.set(next_sess)
@@ -214,9 +240,14 @@ def run_app():
 
     # Start button
     def start_session():
-        nonlocal session_start_time
+        nonlocal session_start_time, current_task, task_session_remaining
+
         session_start_time = datetime.now()
         stype = session_type_var.get()
+
+        current_task = task_var.get().strip()
+        task_session_remaining = task_session_goal.get()
+
         session_label.config(
             text=f"{stype} Session {session_counts[stype] + 1}"
         )
