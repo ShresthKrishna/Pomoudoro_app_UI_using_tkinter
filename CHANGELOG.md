@@ -73,3 +73,70 @@ All notable changes to this project will be documented here.
 - Scrollbar not working in third-party version due to incorrect window configuration
 - Analytics layout now stable across screen sizes with automatic switching
 """
+- ## [2025-05-12] - Task Plan Feature Added
+
+**Added**
+- "Task Plan" section to Home screen: task name entry + session goal spinbox
+- Internal tracking of task state across multiple Pomodoros
+- Auto-clearing of task field when planned sessions complete
+
+**Changed**
+- Session logging now includes task name for Work sessions
+
+**Fixed**
+- Prevented premature task resets between consecutive Pomodoros
+
+## [2025-05-13] - Task Analytics Integration & Chart Flexibility
+
+### **Added**
+- `analytics.py`: New summarizer functions `summarize_time_per_task()` and `count_sessions_per_task()` for task-based insights.
+- `mock_data.py`: Added `per_task_time` and `task_frequency` mock data to support new analytics visualizations in development mode.
+- `charts.py`: Made `draw_bar_chart()` and `draw_pie_chart()` configurable with `x_key`, `y_key`, `label_key`, and `value_key` parameters.
+- `analytics_screen.py`: Introduced two new chart sections in the scrollable layout:
+  - **Top Tasks by Time** (horizontal bar chart)
+  - **Task Frequency Breakdown** (pie chart)
+
+### **Changed**
+- `generate_all_summaries()` now includes `per_task_time` and `task_frequency` keys for downstream chart rendering.
+- All chart calls in `analytics_screen.py` explicitly specify key mappings to align with flexible chart function signatures.
+- Chart functions are now resilient to column mismatches and default to human-readable axis titles.
+
+### **Fixed**
+- Handled `KeyError` when mock summaries lacked expected keys for task-based charts.
+- Clarified inconsistent return types in analytics helpers with updated type hints.
+- Improved UI safety: pie/bar charts now fail gracefully when passed empty or malformed data.
+
+## [2025-05-13] - Task Plan & Analytics Dashboard Update
+
+**Added:**
+- Task Plan input and session goal tracking on Home screen.
+- Auto-clearing task input after planned sessions.
+- Dashboard line chart for clearer 7-day session-type trends.
+- New analytics summarizers: `summarize_daily_by_type()`, `summarize_daily_for_tasks()`.
+
+**Changed:**
+- Updated dashboard layout to clearly group related analytics visually.
+- Enhanced placeholder structure, with vertical spanning for task frequency visuals.
+
+**Fixed:**
+- Ensured session logging schema compatibility (no breaking changes).
+- Verified seamless layout-toggle logic based on screen width.
+
+## [2025-05-14] - v1.3 Final Dashboard Layout & Task Analytics Integration
+
+**Added:**
+- Line chart: 7-Day Activity Overview (session type trends)
+- Dropdown for task trend overlay using `summarize_daily_for_tasks()`
+- Task analytics visuals:
+  - Top Tasks by Time (bar)
+  - Task Frequency Breakdown (pie)
+- `draw_line_chart()` function in `charts.py` for reusable multi-line trends
+
+**Changed:**
+- Finalized 3×4 dashboard layout with improved grid placement
+- `Task Frequency` chart now spans 2 rows for visual balance
+- Scrollable layout updated to match dashboard structure and interactivity
+
+**Fixed:**
+- All charts now handle empty/mock data cleanly
+- Ensured layout toggle between scrollable and dashboard is seamless
