@@ -1,10 +1,12 @@
 import tkinter as tk
+from tkinter import ttk
 from pomodoro.timer_engine import TimerEngine
 from datetime import datetime
 from pomodoro.logger import log_session
 from pomodoro.theme import theme
 from screens.analytics_screen import render_analytics_screen
 from utils.storage import save_user_settings, load_user_settings
+from pomodoro.task_memory import get_all_tasks, update_task_memory
 
 
 def run_app():
@@ -117,17 +119,30 @@ def run_app():
             session_label.grid(row=3, column=0, pady=5)
 
             # Task entry
+            all_tasks = get_all_tasks()  # Loaded once on app launch
+
+            # Task input with suggestions
             task_frame = tk.LabelFrame(
                 frame, text="Task",
                 font=theme["label_font"], bg=theme["bg_color"]
             )
             task_frame.grid(row=4, column=0, sticky="ew", padx=20, pady=10)
             task_frame.columnconfigure(0, weight=1)
-            tk.Entry(
-                task_frame, textvariable=task_var,
-                font=theme["label_font"]
-            ).grid(row=0, column=0, sticky="ew", padx=10, pady=5)
 
+            task_combobox = ttk.Combobox(
+                task_frame, textvariable=task_var,
+                values=all_tasks, font=theme["label_font"]
+            )
+            task_combobox.grid(row=0, column=0, sticky="ew", padx=10, pady=5)
+            task_combobox.set("")
+
+            # Dynamic dropdown filtering
+            def filter_task_suggestions(event=None):
+                query = task_var.get().lower()
+                matches = [t for t in all_tasks if t.lower().startswith(query)]
+                task_combobox["values"] = matches[:6]
+
+            task_combobox.bind("<KeyRelease>", filter_task_suggestions)
             # Task Plan
             task_plan_frame = tk.LabelFrame(
                 frame, text="Task Plan",
@@ -247,7 +262,8 @@ def run_app():
 
         current_task = task_var.get().strip()
         task_session_remaining = task_session_goal.get()
-
+        if current_task:
+            update_task_memory(current_task)
         session_label.config(
             text=f"{stype} Session {session_counts[stype] + 1}"
         )
