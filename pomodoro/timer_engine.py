@@ -60,3 +60,10 @@ class TimerEngine:
         self.completed_session = 0
         self.session_type = "Work"
         self.update_display_cb(0, 0)
+
+    def start_from(self, seconds, session_type):
+        self.remaining = seconds
+        self.is_running = True
+        self.is_paused = False
+        self.session_type = session_type
+        self.tick()
