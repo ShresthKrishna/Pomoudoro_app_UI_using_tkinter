@@ -140,3 +140,21 @@ All notable changes to this project will be documented here.
 **Fixed:**
 - All charts now handle empty/mock data cleanly
 - Ensured layout toggle between scrollable and dashboard is seamless
+
+## [2025-05-15] – Codebase Modularization & Resume Logic Fixes
+
+**Added:**
+- Modular file structure (split `app.py` into reusable modules)
+- `task_memory.py` for persistent task tracking
+- `session_manager.py` to centralize resume + session state handling
+- Modular bottom controls (start/pause/reset)
+
+**Changed:**
+- Task input is now a live-filtering `ttk.Combobox`
+- All charts now fail-safe against missing pivot columns
+- Visual layout rebuilt with consistent row configs
+
+**Fixed:**
+- Crashes from missing keys (`daily_by_type`) in mock summaries
+- Task memory no longer appends unlimited entries
+- UI glitches around timer/task/session label stacking resolved

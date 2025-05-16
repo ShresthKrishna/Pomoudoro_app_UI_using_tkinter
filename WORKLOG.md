@@ -230,3 +230,24 @@ Daily progress journal for the Pomodoro Productivity App.
   - Trend overlay for multiple tasks
   - Treeview polish (tooltips, colors, column width)
   - Optional: persistent task tracking
+
+## 📅 2025-05-15 – Structural Refactor & Feature Recovery
+
+**Work Done:**
+- Split `app.py` into modular files: `layout.py`, `navigation.py`, `session_manager.py`, `home_screen.py`, etc.
+- Refactored `home_screen.py` with `rowconfigure(minsize=...)` to fix UI grid issues.
+- Modularized bottom nav (`create_bottom_controls`) for cleaner state handling.
+- Implemented a resilient, filtered `ttk.Combobox` for task input with live task suggestion.
+- Cleaned up `task_memory.py`: added safe JSON loading, auto-pruning, and fallback.
+- Fixed chart crash bug by ensuring pivot tables always contain expected session type columns.
+- Restored full **Resume Session** logic via `SessionManager`, including persistence sync and state restoration.
+
+**Fixes:**
+- Task memory was not sorted or limited → now corrected.
+- Session type dropdown previously glitched UI → now stable.
+- Task tracking flow was breaking during pause/resume → now unified with `session_manager`.
+
+**Current Status:**
+- No crashes, no layout bugs, full analytics screen working, resume timer stable.
+- Feature development may now resume (starting with Subtask Planner).
+

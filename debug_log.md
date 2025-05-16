@@ -70,3 +70,14 @@
 - Confirmed all new summary functions (`analytics.py`) handle mock and real data correctly.
 
 **No critical issues or regressions identified.**
+
+## 📅 2025-05-15 – Stability Fix Log
+
+**Resolved Issues:**
+- 🔥 [Critical] `KeyError: 'daily_by_type'` → caused by incomplete mock summaries; patched mock return values.
+- 🔧 [Visual] Task entry used `ttk.Entry` → replaced with `ttk.Combobox` + dynamic filtering to prevent mistypes and encourage reuse.
+- 🧠 [State Loss] Resume timer state was not syncing across UI and task memory → consolidated under `session_manager`.
+- 🎯 [UI Bug] Session type dropdown and session label were overlapping → corrected via `rowconfigure(minsize)` constraints.
+
+**Root Cause Summary:**
+- Several untracked changes during Git issues led to rollback of resume, task tracking, and combobox logic. These have now been reconstructed, modularized, and documented.
