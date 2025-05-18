@@ -158,3 +158,20 @@ All notable changes to this project will be documented here.
 - Crashes from missing keys (`daily_by_type`) in mock summaries
 - Task memory no longer appends unlimited entries
 - UI glitches around timer/task/session label stacking resolved
+
+## [v1.4-pre] – 2025-05-18
+
+**Added**
+- Full-width and height resizing support for analytics screen layouts.
+- DPI scaling integration for better display on high-resolution screens.
+- Unified selector for toggling between session type and task trends in 7-day chart.
+
+**Changed**
+- The 7-day activity chart now pads missing session types to ensure consistent rendering.
+- Layout switching logic now uses proper debounce to avoid redundant redraws.
+
+**Fixed**
+- `KeyError` when summary data omitted session types in trend charts.
+- Canvas and inner frame width mismatch resolved with proper window bindings.
+- Restored dynamic scrollregion resizing after missing `<Configure>` events were re-bound.
+- Prevented layout flicker during resize by stabilizing debounce and redraw order.

@@ -251,3 +251,25 @@ Daily progress journal for the Pomodoro Productivity App.
 - No crashes, no layout bugs, full analytics screen working, resume timer stable.
 - Feature development may now resume (starting with Subtask Planner).
 
+
+## 📅 2025-05-18
+
+**Work Done:**
+- Investigated and resolved a series of layout and resizing bugs affecting the analytics screen.
+- Patched a `KeyError` in the scrollable view's 7-day trend chart caused by missing session type columns.
+- Fixed canvas width not expanding on window resize by re-applying `canvas.itemconfig(...)`.
+- Restored `on_canvas_configure` and `on_container_configure` bindings removed in a prior refactor.
+- Corrected debounce logic used for layout switching; the `after_cancel()` handle was mis-scoped.
+- Introduced DPI scaling adjustments for high-resolution screens using `SetProcessDpiAwareness(1)` and `tk.call(...)`.
+- Final stabilization involved syncing layout logic with canvas bindings and chart logic to ensure both width and height now resize responsively.
+
+**Decisions Made:**
+- “Work”, “Short Break”, and “Long Break” traces are now always padded in the line chart for visual consistency.
+- Scrollable and dashboard layout switching now uses a clean debounce trigger on window width.
+- DPI scaling remains manual until layout auto-adjustments are proven stable across OS types.
+
+**Next Steps:**
+- Begin implementation of the End Session feature and incomplete session logging.
+- Move forward with Subtask Planner module creation and UI toggle integration.
+
+

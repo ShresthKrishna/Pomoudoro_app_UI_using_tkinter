@@ -81,3 +81,24 @@
 
 **Root Cause Summary:**
 - Several untracked changes during Git issues led to rollback of resume, task tracking, and combobox logic. These have now been reconstructed, modularized, and documented.
+## 🐞 2025-05-18 – debug_log.md
+
+**Issue 1**: KeyError in scrollable 7-day chart  
+- Cause: Summary DataFrame sometimes lacked “Work” or other session keys.  
+- Fix: Chart function now pads missing columns with zero-count data.
+
+**Issue 2**: Canvas width did not adjust on window resize  
+- Cause: Width was never updated using `canvas.itemconfig()` after `create_window()`.  
+- Fix: Bound canvas width to frame container and dynamically updated it on `<Configure>`.
+
+**Issue 3**: Removed bindings during refactor  
+- Cause: Scrollregion and window width weren’t updating due to missing canvas/frame binding logic.  
+- Fix: Restored `on_canvas_configure` and `on_container_configure` to fix dynamic layout.
+
+**Issue 4**: Mis-scoped debounce handler  
+- Cause: `resize_job[]` handle wasn't safely scoped, leading to invalid callback errors.  
+- Fix: Moved debounce logic to outer scope; now cancels and replaces cleanly.
+
+**Issue 5**: DPI scaling unrelated to layout flow  
+- Cause: Font sharpness improved via OS DPI settings, but layout size remained unaffected.  
+- Fix: DPI tweaks retained, but layout corrected using proper column/row configuration.
