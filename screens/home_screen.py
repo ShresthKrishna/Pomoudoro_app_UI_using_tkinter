@@ -18,7 +18,7 @@ def render_home_screen(frame, manager):
         text="Session Type",
         bg=theme["bg_color"],
         font=theme["label_font"]
-    ).grid(row=0, column=0, sticky="n", pady=(5, 0))
+    ).grid(row=0, column=0, sticky="nsew", pady=(5, 0))
 
     # 1: Session type dropdown (wide)
     opt = tk.OptionMenu(
@@ -36,7 +36,7 @@ def render_home_screen(frame, manager):
         font=theme["timer_font"],
         bg=theme["bg_color"]
     )
-    manager.timer_label.grid(row=2, column=0)
+    manager.timer_label.grid(row=2, column=0, sticky="ew")
 
     # 3: Session label
     manager.session_label = tk.Label(
@@ -45,7 +45,7 @@ def render_home_screen(frame, manager):
         font=theme["label_font"],
         bg=theme["bg_color"]
     )
-    manager.session_label.grid(row=3, column=0, pady=(5, 0))
+    manager.session_label.grid(row=3, column=0, pady=(5, 0), sticky="ew")
 
     # 4: Task Plan box
     task_frame = tk.LabelFrame(
@@ -65,7 +65,7 @@ def render_home_screen(frame, manager):
         text="Task Name:",
         font=theme["label_font"],
         bg=theme["bg_color"]
-    ).grid(row=0, column=0, sticky="w", padx=(10, 5), pady=5)
+    ).grid(row=0, column=0, sticky="ew", padx=(10, 5), pady=5)
 
     task_combo = ttk.Combobox(
         task_frame,
@@ -90,21 +90,21 @@ def render_home_screen(frame, manager):
         text="Sessions:",
         font=theme["label_font"],
         bg=theme["bg_color"]
-    ).grid(row=1, column=0, sticky="w", padx=(10, 5), pady=5)
+    ).grid(row=1, column=0, sticky="ew", padx=(10, 5), pady=5)
 
     tk.Spinbox(
         task_frame,
         from_=1, to=10,
         textvariable=manager.task_session_goal,
         width=5
-    ).grid(row=1, column=1, sticky="w", padx=(0, 10), pady=5)
+    ).grid(row=1, column=1, sticky="ew", padx=(0, 10), pady=5)
     #   Sessions spinbox
     tk.Label(
         task_frame,
         text="Sessions:",
         font=theme["label_font"],
         bg=theme["bg_color"]
-    ).grid(row=1, column=0, sticky="w", padx=(10, 5), pady=5)
+    ).grid(row=1, column=0, sticky="ew", padx=(10, 5), pady=5)
     tk.Spinbox(
         task_frame,
         from_=1, to=10,

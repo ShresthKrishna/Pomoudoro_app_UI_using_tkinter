@@ -21,7 +21,9 @@ features = {
         "Log completed sessions to CSV": True,
         "Log duration (minutes)": True,
         "Track task/subject (e.g. 'Math')": False,   # Task selector UI is pending
-        "Log session start + end timestamps": True
+        "Log session start + end timestamps": True,
+        "Log incomplete / manually-ended sessions": False,
+        "Log user productivity rating (1–5)": False
     },
 
     "Analytics Dashboard": {
@@ -33,7 +35,8 @@ features = {
         "Pie / bar / line chart visuals": True,
         "Load fallback mock data for dev mode": True,
         "Switch to real data after first session": False,
-        "Show placeholder message when no data exists": False
+        "Show placeholder message when no data exists": False,
+        "Productivity vs Time heatmap (hour-wise)": False  # NEW IDEA
     },
 
     "UI & Navigation": {

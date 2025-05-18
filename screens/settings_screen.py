@@ -22,7 +22,7 @@ def render_settings_screen(frame, manager):
             .grid(row=i, column=0, padx=10, pady=10, sticky="w")
         tk.Spinbox(settings_box, from_=1, to=60, textvariable=manager.duration_vars[key],
                    font=theme["label_font"], width=8)\
-            .grid(row=i, column=1, padx=10, pady=10, sticky="e")
+            .grid(row=i, column=1, padx=10, pady=10, sticky="ew")
 
     tk.Button(frame, text="Save Settings", bg=theme["accent_color"], font=theme["button_font"],
               command=manager.save_settings)\

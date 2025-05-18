@@ -1,10 +1,14 @@
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pomodoro.theme import theme
+import matplotlib as mpl
+
 
 def draw_bar_chart(frame, df, title="", x_key="date", y_key="count", size=None, use_blit=False):
     if size is None:
         size = theme["chart_size_tall"]
+    mpl.rcParams['figure.dpi'] = 120  # or 150
+    mpl.rcParams['savefig.dpi'] = 120
     fig, ax = plt.subplots(figsize=size)
 
     # Plot the data using provided keys
@@ -27,6 +31,8 @@ def draw_bar_chart(frame, df, title="", x_key="date", y_key="count", size=None, 
 def draw_pie_chart(frame, df, title="", label_key="type", value_key="total_minutes", size=None, use_blit=False):
     if size is None:
         size = theme["chart_size_tall"]
+    mpl.rcParams['figure.dpi'] = 120  # or 150
+    mpl.rcParams['savefig.dpi'] = 120
     fig, ax = plt.subplots(figsize=size)
 
     ax.pie(
@@ -50,6 +56,8 @@ def draw_stacked_bar_chart(frame, df, size=None, use_blit=False):
     if size is None:
         size = theme["chart_size_tall"]
     pivot = df.pivot(index="date", columns="type", values="count").fillna(0)
+    mpl.rcParams['figure.dpi'] = 120  # or 150
+    mpl.rcParams['savefig.dpi'] = 120
     fig, ax = plt.subplots(figsize=size)
     pivot.plot(kind="bar", stacked=True, ax=ax, colormap=theme["default_colormap"])
     ax.set_xticks(range(len(pivot.index)))
@@ -102,6 +110,8 @@ def draw_line_chart(frame, df, x_key="date", y_keys=None, labels=None,
     if not y_keys:
         return
 
+    mpl.rcParams['figure.dpi'] = 120  # or 150
+    mpl.rcParams['savefig.dpi'] = 120
     fig, ax = plt.subplots(figsize=size)
     x = df[x_key].astype(str)
     for i, yk in enumerate(y_keys):

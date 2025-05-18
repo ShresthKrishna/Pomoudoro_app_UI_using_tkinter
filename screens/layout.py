@@ -6,11 +6,16 @@ from pomodoro.theme import theme
 
 def create_all_screens(parent, session_manager):
     frames = {}
+
+    parent.rowconfigure(0, weight=1)
+    parent.columnconfigure(0, weight=1)
     for name in ("home", "settings", "analytics"):
         frame = tk.Frame(parent, bg=theme["bg_color"])
         frame.grid(row=0, column=0, sticky="nsew")
-        frame.rowconfigure(0, weight=1)
+        # Correctly apply weight to column 0
         frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+        frame.grid_propagate(True)
         frames[name] = frame
 
     render_home_screen(frames["home"], session_manager)

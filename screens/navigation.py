@@ -4,6 +4,8 @@ from pomodoro.theme import theme
 def create_navigation(parent, show_frame_callback):
     top_frame = tk.Frame(parent, bg=theme["bg_color"])
     top_frame.grid(row=0, column=0, sticky="ew", pady=10)
+
+    parent.columnconfigure(0, weight=1)  # ✅ ADDED: allow top_frame to expand
     top_frame.columnconfigure((0, 1, 2), weight=1)
 
     for i, label in enumerate(["Home", "Settings", "Analytics"]):
@@ -13,12 +15,14 @@ def create_navigation(parent, show_frame_callback):
             bg=theme["button_color"],
             font=theme["button_font"],
             command=lambda name=label.lower(): show_frame_callback(name)
-        ).grid(row=0, column=i, padx=20, sticky="ew")
+        ).grid(row=0, column=i, padx=20, sticky="nsew")
 
 
 def create_bottom_controls(parent, manager):
     bottom_frame = tk.Frame(parent, bg=theme["bg_color"])
-    bottom_frame.grid(row=2, column=0, sticky="ew", pady=10)
+    bottom_frame.grid(row=0, column=0, sticky="ew", pady=10)
+
+    parent.columnconfigure(0, weight=1)  # ✅ ADDED: allow bottom_frame to expand
     bottom_frame.columnconfigure((0, 1, 2), weight=1)
 
     def toggle():
