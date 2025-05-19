@@ -26,7 +26,7 @@ def render_home_screen(frame, manager):
         manager.session_type_var,
         "Work", "Short Break", "Long Break"
     )
-    opt.config(width=22)
+    # opt.config(width=22)
     opt.grid(row=1, column=0, sticky="ew", padx=30, pady=(0, 10))
 
     # 2: Timer display (centered in the expanding area)
@@ -73,7 +73,7 @@ def render_home_screen(frame, manager):
         values=manager.all_tasks,
         font=theme["label_font"]
     )
-    task_combo.config(width=30)
+    # task_combo.config(width=30)
     task_combo.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=5)
 
     # filter on each key release

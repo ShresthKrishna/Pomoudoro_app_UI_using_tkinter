@@ -19,7 +19,7 @@ def render_settings_screen(frame, manager):
 
     for i, key in enumerate(labels):
         tk.Label(settings_box, text=labels[key], font=theme["label_font"], bg=theme["bg_color"], fg="black")\
-            .grid(row=i, column=0, padx=10, pady=10, sticky="w")
+            .grid(row=i, column=0, padx=10, pady=10, sticky="ew")
         tk.Spinbox(settings_box, from_=1, to=60, textvariable=manager.duration_vars[key],
                    font=theme["label_font"], width=8)\
             .grid(row=i, column=1, padx=10, pady=10, sticky="ew")
