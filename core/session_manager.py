@@ -6,7 +6,7 @@ from pomodoro.logger import log_session
 from pomodoro.timer_state_manager import save_timer_state, load_timer_state, clear_timer_state
 from pomodoro.task_memory import get_all_tasks, update_task_memory
 from utils.storage import load_user_settings, save_user_settings
-from pomodoro.theme import theme
+
 
 class SessionManager:
     def __init__(self, root):
@@ -21,6 +21,7 @@ class SessionManager:
         self.work_sessions_completed = 0
         self.session_start_time = None
         self.is_paused = False
+        self.set_start_button_state = lambda state: None  # will be assigned later
 
         # Duration settings
         self.duration_vars = {
@@ -144,6 +145,7 @@ class SessionManager:
         if self.session_label:
             self.session_label.config(text="Work Session 1")
         clear_timer_state()
+        self.set_start_button_state("start")
 
     def resume_if_possible(self):
         state = load_timer_state()
@@ -163,3 +165,25 @@ class SessionManager:
             self.timer_engine.start_from(remaining, state["session_type"])
             return True
         return False
+
+    def end_session(self):
+        end_time = datetime.now()
+
+        if not self.session_start_time:
+            duration = 0
+        else:
+            duration = round((end_time - self.session_start_time).total_seconds() / 60)
+
+        session_type = self.session_type_var.get()
+        self.session_counts[session_type] += 1  # ✅ increment session number here
+
+        log_session(
+            session_type,
+            end_time,
+            self.session_counts[session_type],
+            duration,
+            task=self.task_var.get().strip(),
+            completed=False
+        )
+
+        self.reset_session()

@@ -9,7 +9,7 @@ def run_app():
     # DPI / HiDPI awareness:
     try:
         from ctypes import windll
-        windll.shcore.SetProcessDpiAwareness(1)
+        windll.shcore.SetProcessDpiAwareness(2)
     except:
         pass
     root.tk.call('tk', 'scaling', 1.5)
@@ -30,6 +30,8 @@ def run_app():
 
     # Top nav:
     top_frame = tk.Frame(root, bg=theme["bg_color"])
+    top_frame.columnconfigure((0, 1, 2), weight=1)
+    top_frame.rowconfigure(0, weight=1)
     top_frame.grid(row=0, column=0, sticky="ew")
     create_navigation(top_frame, session_manager.show_frame)
 
@@ -42,10 +44,7 @@ def run_app():
     # Bottom controls:
     bottom_frame = tk.Frame(root, bg=theme["bg_color"])
     bottom_frame.grid(row=2, column=0, sticky="ew", pady=10)
-    top_frame.columnconfigure(0, weight=1)
-    top_frame.rowconfigure(0, weight=1)
-
-    bottom_frame.columnconfigure(0, weight=1)
+    bottom_frame.columnconfigure((0, 1, 2), weight=1)
     bottom_frame.rowconfigure(0, weight=1)
 
     create_bottom_controls(bottom_frame, session_manager)

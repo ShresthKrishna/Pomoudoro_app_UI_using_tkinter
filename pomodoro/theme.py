@@ -11,5 +11,13 @@ theme = {
     "chart_size_wide": (6, 2.5),
     "treeview_row_height": 24,
     "default_colormap": "Pastel1",
-    "chart_padding": (20, 10)
+    "chart_padding": (20, 10),
+    "button_start":{
+        "bg": "#4CAF50",
+        "fg": "#FFFFFF"
+    },
+    "button_end":{
+        "bg": "#D32F2f",
+        "fg": "#FFFFFF"
+    }
 }

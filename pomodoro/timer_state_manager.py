@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 TIMER_STATE_PATH = Path("data/timer_state.json")
 
 def save_timer_state(state_dict):

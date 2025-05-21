@@ -4,7 +4,8 @@ from pathlib import Path
 from faker import Faker
 from datetime import datetime, timedelta
 
-MOCK_DATA_FILE = Path("data/mock_data.csv")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MOCK_DATA_FILE = PROJECT_ROOT / "data" / "mock_data.csv"
 Faker.seed(123)
 fake = Faker()
 

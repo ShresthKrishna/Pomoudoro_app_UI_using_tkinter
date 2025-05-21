@@ -2,7 +2,8 @@ from pathlib import Path
 import json
 from datetime import datetime
 
-TASK_FILE = Path("data/user_tasks.json")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+TASK_FILE = Path(PROJECT_ROOT)/"data"/"user_tasks.json"
 MAX_TASKS = 50
 
 def load_task_dict():

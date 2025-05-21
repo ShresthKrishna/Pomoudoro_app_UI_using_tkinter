@@ -23,34 +23,67 @@ def create_bottom_controls(parent, manager):
     # we need a stable ref for the Pause button so toggle_pause can update its text
     pause_btn = None
 
+    buttons = {}
+
+    # Start/End shared button
+
+    def on_start():
+        manager.on_start()
+        set_start_button_state("end")
+
+    def on_end():
+        manager.end_session()
+        set_start_button_state("start")
+
+    def set_start_button_state(state):
+        if state=="start":
+            buttons["start"].config(
+                text="Start",
+                bg=theme["button_start"]["bg"],
+                fg=theme["button_start"]["fg"],
+                command=on_start
+            )
+        elif state=="end":
+            buttons["start"].config(
+                text="End",
+                bg=theme["button_end"]["bg"],
+                fg=theme["button_end"]["fg"],
+                command=on_end
+
+            )
     # Start
-    start_btn = tk.Button(
+    buttons["start"] = tk.Button(
         parent,
         text="Start",
-        bg=theme["accent_color"],
         font=theme["button_font"],
-        command=manager.on_start
+        bg=theme["button_start"]["bg"],
+        fg=theme["button_start"]["fg"],
+        command=on_start
     )
-    start_btn.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-
+    buttons["start"].grid(row=0, column=0, sticky="nsew",
+                          padx=10, pady=10)
     # Pause / Resume
     def _toggle():
-        manager.toggle_pause(pause_btn)
-    pause_btn = tk.Button(
+        manager.toggle_pause(buttons["pause"])
+    buttons["pause"] = tk.Button(
         parent,
         text="Pause",
         bg=theme["button_color"],
         font=theme["button_font"],
         command=_toggle
     )
-    pause_btn.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+    buttons["pause"].grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
     # Reset
-    reset_btn = tk.Button(
+    def _reset():
+        manager.reset_session()
+        set_start_button_state("start")
+    buttons["reset"] = tk.Button(
         parent,
         text="Reset",
         bg=theme["button_color"],
         font=theme["button_font"],
-        command=manager.reset_session
+        command= _reset
     )
-    reset_btn.grid(row=0, column=2, sticky="nsew", padx=10, pady=10)
+    buttons["reset"].grid(row=0, column=2, sticky="nsew", padx=10, pady=10)
+    manager.set_start_button_state = set_start_button_state

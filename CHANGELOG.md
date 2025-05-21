@@ -175,3 +175,29 @@ All notable changes to this project will be documented here.
 - Canvas and inner frame width mismatch resolved with proper window bindings.
 - Restored dynamic scrollregion resizing after missing `<Configure>` events were re-bound.
 - Prevented layout flicker during resize by stabilizing debounce and redraw order.
+
+## 🐞 2025-05-19 – Lazy Rendering Fix for Analytics Screen
+
+**Issue**: Analytics screen blocked window expansion on launch  
+- Cause: Initial rendering involved multiple charts, summary generation, and heavy Matplotlib operations inside `render_analytics_screen()`, which delayed root layout expansion.
+- Fix: Deferred rendering until navigation to the Analytics screen using a lazy load trigger. Layout now initializes fully before rendering begins.
+
+**Result**:
+- All screens now allow proper width and height expansion on drag.
+- Slight delay on first Analytics load is acceptable and non-blocking.
+- No regressions observed in navigation, DPI scaling, or layout responsiveness.
+
+## [v1.4-pre] – 2025-05-21
+
+### Added
+- Unified Start/End session button with dynamic label and style based on session state
+- New `completed` column in `session.csv` to distinguish full vs manually ended sessions
+- `end_session()` function to handle early termination and proper logging
+
+### Fixed
+- File path issue in session logging resolved using `PROJECT_ROOT`
+- Confirmed CSV file write behavior and schema consistency across manual and automatic ends
+
+### Notes
+- Logging now fully supports session duration and intent integrity
+- Button visual behavior is consistent with task state and timer phase

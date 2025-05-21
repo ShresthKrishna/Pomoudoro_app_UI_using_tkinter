@@ -273,3 +273,51 @@ Daily progress journal for the Pomodoro Productivity App.
 - Move forward with Subtask Planner module creation and UI toggle integration.
 
 
+## 📅 2025-05-19
+
+**Work Done:**
+- Implemented lazy rendering for the Analytics screen to prevent UI layout blocking during startup.
+- Deferred `render_analytics_screen()` until the user first navigates to the Analytics tab.
+- Integrated logic into navigation to detect first-time activation and trigger rendering.
+- Verified that window width and height can now expand fluidly across all screens.
+- Slight lag remains on first render of Analytics, but it no longer interferes with root window geometry.
+
+**Decisions Made:**
+- Lazy rendering is sufficient for current performance requirements and has unblocked layout constraints.
+- Deeper optimization (e.g., threading or render batching) deferred until post-v1.4 milestone.
+
+**Next Steps:**
+- Begin implementation of the End Session feature and session window tracking.
+- Coordinate with Code
+## 📅 2025-05-21
+
+**Work Done:**
+- Replaced the separate Start and End session flow with a unified button that dynamically changes label, color, and behavior based on session state.
+- Button now switches from "Start" (green) to "End Session" (red) once a session begins. Returns to "Start" after reset or manual end.
+- Styling logic centralized in `theme.py` via new `button_start` and `button_end` keys.
+- Integrated into `SessionManager` via `set_start_button_state()` for consistency across state transitions.
+
+- Implemented `end_session()` functionality:
+  - Captures `start_time`, `end_time`, and `duration_minutes`
+  - Marks the session as `completed=False` if manually ended early
+  - Logs the session and resets state cleanly
+  - Increments session number even on manual end to ensure continuity
+
+- Updated `logger.py` to support new `completed` field:
+  - Defaults to `True` for normal completions
+  - Converts Boolean to `1` or `0` for CSV
+  - Ensures schema remains stable and backward-compatible
+
+- Fixed file path issue with `session.csv`:
+  - Previously wrote to wrong location if app run from subdirectory
+  - Introduced `PROJECT_ROOT = Path(__file__).resolve().parent.parent`
+  - Ensures log path is always rooted at top-level `data/` directory
+
+**Decisions Made:**
+- Keeping unified button over multiple controls simplifies user experience and layout
+- Logging structure now fully supports both complete and interrupted sessions
+
+**Next Steps:**
+- Consider use of `completed` flag in analytics summary generation
+- Add optional visual indicators for incomplete sessions in session history
+- Cache rendered charts for performance when revisiting Analytics screen

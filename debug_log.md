@@ -102,3 +102,35 @@
 **Issue 5**: DPI scaling unrelated to layout flow  
 - Cause: Font sharpness improved via OS DPI settings, but layout size remained unaffected.  
 - Fix: DPI tweaks retained, but layout corrected using proper column/row configuration.
+
+## 🐞 2025-05-19 – Lazy Rendering Fix for Analytics Screen
+
+**Issue**: Analytics screen blocked window expansion on launch  
+- Cause: Initial rendering involved multiple charts, summary generation, and heavy Matplotlib operations inside `render_analytics_screen()`, which delayed root layout expansion.
+- Fix: Deferred rendering until navigation to the Analytics screen using a lazy load trigger. Layout now initializes fully before rendering begins.
+
+**Result**:
+- All screens now allow proper width and height expansion on drag.
+- Slight delay on first Analytics load is acceptable and non-blocking.
+- No regressions observed in navigation, DPI scaling, or layout responsiveness.
+
+## 🐞 [May 21, 2025] – Session Lifecycle & CSV Logging Integration
+
+**Issue**: No way to log manually ended (incomplete) sessions  
+- Fix: Added `end_session()` method to `SessionManager`  
+- Result: Captures accurate `start_time`, `end_time`, and `completed=False` flag on early session termination
+
+**Issue**: CSV missing proper session completion status  
+- Fix: Updated `log_session()` to accept `completed` flag and write it as `1` or `0`  
+- Result: Sessions now properly marked as completed or interrupted in `session.csv`
+
+**Issue**: session.csv file was logging to incorrect path  
+- Cause: `Path("data")` resolved relative to module execution path  
+- Fix: Introduced `PROJECT_ROOT` using `Path(__file__).resolve().parent.parent` to ensure correct output location
+
+**Tests Conducted**:
+- Verified session logging with debug prints after Start, End, and Reset flows
+- Confirmed file size increments after each write
+- Confirmed column values match expected output (e.g., `completed=0` on End Session)
+
+**Status**: Session lifecycle logging is now structurally sound and location-safe
