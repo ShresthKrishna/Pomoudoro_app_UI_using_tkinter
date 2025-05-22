@@ -36,14 +36,14 @@ features = {
         "Load fallback mock data for dev mode": True,
         "Switch to real data after first session": False,
         "Show placeholder message when no data exists": False,
-        "Productivity vs Time heatmap (hour-wise)": False  # NEW IDEA
+        "Productivity vs Time heatmap (hour-wise)": False
     },
 
     "UI & Navigation": {
         "Multi-screen layout": True,
         "Navigation via top buttons": True,
         "Modular screen loading via show_frame()": True,
-        "Session history viewer": True,  # ✅ Implemented and live as Treeview
+        "Session history viewer": True,
         "Clean theme layout (grid-based)": True
     },
 
@@ -70,5 +70,15 @@ features = {
         "Built-in productivity music engine": False,
         "User profiles or workspace presets": False,
         "Mood-enhancing UI for comfort & focus": False
+    },
+
+    "Motivational Habit Design": {
+        "One Honest Intent Prompt (before session)": False,
+        "End Session Reflection (How was this session?)": False,
+        "Streaks by Behavior or Task Type": False,
+        "Gentle 'You Showed Up' Daily Messages": False,
+        "Flexible Planning Reminders (non-intrusive)": False,
+        "Weekly Practice Summary & Export": False,
+        "Session Forecasting with Reflection": False
     }
 }

@@ -201,3 +201,19 @@ All notable changes to this project will be documented here.
 ### Notes
 - Logging now fully supports session duration and intent integrity
 - Button visual behavior is consistent with task state and timer phase
+## [v1.4-pre] – 2025-05-23
+
+### Added
+- New Task Completion Dialog: When planned sessions for a task are finished, users can now:
+  - Start a new task
+  - Add more sessions to the current task
+  - Continue without any task
+
+### Fixed
+- Timer tick loop no longer runs multiple instances due to incorrect `after()` syntax
+- Timer label and duration state now correctly update after manual task reset
+- Session continuation logic paused automatically after task plan completes
+
+### Improved
+- Manual End Session and Task Completion now integrated smoothly
+- User control over session lifecycle has been fully implemented

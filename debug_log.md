@@ -134,3 +134,22 @@
 - Confirmed column values match expected output (e.g., `completed=0` on End Session)
 
 **Status**: Session lifecycle logging is now structurally sound and location-safe
+## 🐞 [May 23, 2025] – Task Completion Flow & Tick Loop Fixes
+
+**Issue**: Timer tick loop was called recursively
+- Cause: Used `after(..., tick_once())` instead of `after(..., tick_once)`
+- Fix: Passed correct function reference; added `_tick_loop_running` flag to prevent overlaps
+
+**Issue**: Timer label not refreshing after task reset
+- Fix: Manually called `timer_label.config(...)` and `.update_idletasks()` to ensure redraw
+
+**Issue**: Durations did not update after changing task/session type
+- Fix: Explicit call to `update_durations()` inside `new_task()` to apply user settings
+
+**Feature Bug**: Timer resumed automatically after task completion
+- Fix: Session continuation now halted by default; requires user action from the dialog
+
+**Validated**:
+- Dialog blocks session flow until response
+- Label and timer state refresh correctly post-selection
+- Additional sessions correctly update task goal

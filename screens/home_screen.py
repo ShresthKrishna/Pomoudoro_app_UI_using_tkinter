@@ -71,10 +71,14 @@ def render_home_screen(frame, manager):
         task_frame,
         textvariable=manager.task_var,
         values=manager.all_tasks,
-        font=theme["label_font"]
+        font=theme["label_font"],
+        state="normal"
     )
     # task_combo.config(width=30)
     task_combo.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=5)
+    if hasattr(manager, "_just_cleared_task") and manager._just_cleared_task:
+        task_combo.focus_set()
+        manager._just_cleared_task = False
 
     # filter on each key release
     def _filter(evt=None):
@@ -84,20 +88,6 @@ def render_home_screen(frame, manager):
 
     task_combo.bind("<KeyRelease>", _filter)
 
-    #   Sessions (row 1)
-    tk.Label(
-        task_frame,
-        text="Sessions:",
-        font=theme["label_font"],
-        bg=theme["bg_color"]
-    ).grid(row=1, column=0, sticky="ew", padx=(10, 5), pady=5)
-
-    tk.Spinbox(
-        task_frame,
-        from_=1, to=10,
-        textvariable=manager.task_session_goal,
-        width=5
-    ).grid(row=1, column=1, sticky="ew", padx=(0, 10), pady=5)
     #   Sessions spinbox
     tk.Label(
         task_frame,

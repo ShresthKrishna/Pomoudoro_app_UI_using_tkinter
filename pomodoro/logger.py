@@ -25,4 +25,3 @@ def log_session(session_type, completed_at, session_number, duration_minutes, ta
             "task": task,
             "completed": int(completed)
         })
-        print("[DEBUG] Written to:", LOG_FILE.resolve())
