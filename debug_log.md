@@ -153,3 +153,23 @@
 - Dialog blocks session flow until response
 - Label and timer state refresh correctly post-selection
 - Additional sessions correctly update task goal
+
+## 🐞 [May 23, 2025] – Subtask Planner Integration
+
+**Issue**: `user_tasks.json` was not being saved correctly  
+- Cause: Used `parents[2]` in path resolution, which exited project scope  
+- Fix: Adjusted to `parents[1]` to correctly point to `Pomodoro/data/`
+
+**Issue**: Subtask panel overlapped with timer UI  
+- Fix: Moved subtask container to `row=5` in `home_screen.py`
+
+**Issue**: `render_subtask_panel()` returned `None`  
+- Fix: Explicitly returned the frame container from function
+
+**Issue**: JSON structure mismatch — expected list of dicts, got flat list  
+- Fix: Enforced proper format via `add_or_update_task()` in `subtask_engine.py`
+
+**Other Validations:**
+- Confirmed session_manager does not interfere with subtask state
+- Bound `task_var` to active subtask lookups successfully
+- Verified read-only panel renders cleanly under all DPI modes

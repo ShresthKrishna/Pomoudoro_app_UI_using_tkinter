@@ -1,0 +1,30 @@
+{
+  "Some task": {
+    "count": 1,
+    "last_used": "2025-05-23"
+  },
+  "new task": {
+    "count": 2,
+    "last_used": "2025-05-23"
+  },
+  "New_dubug": {
+    "count": 1,
+    "last_used": "2025-05-23"
+  },
+  "Trial_1": {
+    "count": 1,
+    "last_used": "2025-05-23"
+  },
+  "Trial_2": {
+    "count": 1,
+    "last_used": "2025-05-23"
+  },
+  "new": {
+    "count": 1,
+    "last_used": "2025-05-23"
+  },
+  "Trial 3": {
+    "count": 1,
+    "last_used": "2025-05-23"
+  }
+}

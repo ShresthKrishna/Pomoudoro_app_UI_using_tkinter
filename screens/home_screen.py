@@ -1,16 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
 from pomodoro.theme import theme
+from screens.subtask_ui import render_subtask_panel
 
 def render_home_screen(frame, manager):
     # --- Configure grid with explicit heights ---
-    frame.rowconfigure(0, weight=0, minsize=30)   # Session Type label
-    frame.rowconfigure(1, weight=0, minsize=40)   # Dropdown
+    frame.rowconfigure(0, weight=0, minsize=30)  # Session Type label
+    frame.rowconfigure(1, weight=0, minsize=40)  # Dropdown
     frame.rowconfigure(2, weight=1, minsize=100)  # Timer (expands)
-    frame.rowconfigure(3, weight=0, minsize=30)   # Session label
+    frame.rowconfigure(3, weight=0, minsize=30)  # Session label
     frame.rowconfigure(4, weight=0, minsize=100)  # Task Plan
-    frame.rowconfigure(5, weight=0, minsize=20)   # Spacer for bottom controls
-    frame.columnconfigure(0, weight=1)
+    frame.rowconfigure(5, weight=0, minsize=100)  # Subtask panel ← ADD this row
+    frame.rowconfigure(6, weight=0, minsize=20)  # Bottom spacer
 
     # 0: Session Type label
     tk.Label(
@@ -79,6 +80,10 @@ def render_home_screen(frame, manager):
     if hasattr(manager, "_just_cleared_task") and manager._just_cleared_task:
         task_combo.focus_set()
         manager._just_cleared_task = False
+
+    # 5: Subtask panel (optional)
+    subtask_container = render_subtask_panel(frame, manager)
+    subtask_container.grid(row=5, column=0, sticky="nsew")  # ✅ Move it down
 
     # filter on each key release
     def _filter(evt=None):

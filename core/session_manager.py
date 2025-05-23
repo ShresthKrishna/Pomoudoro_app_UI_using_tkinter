@@ -106,9 +106,9 @@ class SessionManager:
               bg=theme["bg_color"], font=theme["label_font"]).pack(pady=(10, 5))
 
         def new_task():
-            self.task_var.set("")  # Clear the task input
-            self.task_session_goal.set(1)  # Reset task session goal
-            self._just_cleared_task = True  # Focus task entry next render
+            self.task_var.set("")
+            self.task_session_goal.set(1)
+            self._just_cleared_task = True
             dialog.destroy()
 
             # Fully reset timer state and UI
@@ -127,7 +127,7 @@ class SessionManager:
                 self.timer_label.config(text=f"{initial_mins:02d}:00")
                 self.frames["home"].update_idletasks()
 
-            self.start_tick_loop()  # <<< ADD THIS LINE
+            self.start_tick_loop()
 
         def continue_no_task():
             self.task_var.set("")

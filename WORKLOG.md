@@ -340,3 +340,28 @@ Daily progress journal for the Pomodoro Productivity App.
 - Added Spinbox for inputting additional sessions when continuing a task
 - Ensured correct timer label updates, session state resets, and session count increments
 - Fixed major tick loop bug
+## 📅 2025-05-24
+
+**Work Done:**
+- Implemented Phase 1 of Subtask Planner (v1.4.1 milestone).
+- Users can now optionally attach subtasks to a task. Subtasks are stored persistently in `user_tasks.json` and displayed in a collapsible UI panel beneath the Task Plan section.
+
+**Modules Created:**
+- `subtask_engine.py`: defines subtask schema, storage logic, and utility functions.
+- `subtask_ui.py`: renders read-only panel displaying current subtasks for the active task.
+- `logger.py`: extended to accept optional `subtask` field in session logs.
+
+**UI Integration:**
+- Subtask panel added to `home_screen.py` at `row=5`.
+- Expand/collapse toggle activates display of subtask list with: `Name | Goal | Done`.
+
+**Technical Fixes:**
+- Corrected file path for saving `user_tasks.json` (now saved under `/data/`)
+- Fixed missing return from `render_subtask_panel()`
+- Added diagnostics to confirm read/write behavior
+- Validated task-subtask sync via `manager.task_var`
+
+**Next Steps:**
+- Enable Add/Edit/Delete for subtasks
+- Link subtask progress to session completion
+- Later: feed subtask data into analytics/streak logic
