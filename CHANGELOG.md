@@ -217,3 +217,36 @@ All notable changes to this project will be documented here.
 ### Improved
 - Manual End Session and Task Completion now integrated smoothly
 - User control over session lifecycle has been fully implemented
+## [v1.4.1-pre] – 2025-05-23
+
+### Added
+- Subtask Planner scaffolding and UI rendering
+- New files: `subtask_engine.py`, `subtask_ui.py`
+- Users can define subtasks under a task, each with its own goal and progress counter
+- Subtasks are displayed in a collapsible panel under the Task Plan
+
+### Changed
+- Session logger updated to support optional `subtask` column in `session.csv`
+
+### Fixed
+- File path bug in subtask save logic (incorrect path traversal resolved)
+- Panel placement bug causing overlap with timer resolved
+- Return value added to `render_subtask_panel()` for integration stability
+- JSON structure validation added to subtask entry system
+
+## [v1.4.1-pre] – 2025-05-26
+
+### Added
+- Full subtask engine logic with persistent CRUD support:
+  - `add_subtask`, `edit_subtask`, `delete_subtask`, `reset_subtasks`
+- `mark_subtask_progress()` tracks and auto-advances current subtask
+- Logger updated to support optional `subtask` field in `session.csv`
+- Session completion callback now integrates with subtask engine
+
+### Changed
+- Subtasks are now auto-tracked in parallel to task session goals
+- Work session completion conditionally pauses only if all subtasks are complete
+
+### Fixed
+- Guard added to prevent duplicate subtask names under a single task
+- Debug logging added for JSON path traces and per-session subtask increments

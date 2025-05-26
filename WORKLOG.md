@@ -365,3 +365,24 @@ Daily progress journal for the Pomodoro Productivity App.
 - Enable Add/Edit/Delete for subtasks
 - Link subtask progress to session completion
 - Later: feed subtask data into analytics/streak logic
+
+## 📅 2025-05-26
+
+**Work Done:**
+- Completed core logic for Subtask Planner Phase 2. All essential lifecycle methods (`add_subtask`, `edit_subtask`, `delete_subtask`, `mark_subtask_progress`, `reset_subtasks`) are now implemented and tested.
+- `mark_subtask_progress()` is invoked from `session_complete_cb()` to track subtask advancement. Returned names are used for session logging and UI refresh.
+- Logger updated to accept and log an optional `subtask` field in `session.csv`.
+- Session flow now tracks active subtasks during Work sessions. Auto-increments subtask progress and only pauses when all subtasks are complete.
+- Debug statements added for traceability: JSON writes, duplicate name rejections, and subtask session marking.
+
+**Files Modified:**
+- `pomodoro/subtask_engine.py`: Full CRUD methods, `_save_all()` helper, and duplicate guard implemented
+- `pomodoro/subtask_ui.py`: Scaffolded render panel with dynamic frame wiring
+- `core/session_manager.py`: Integrated subtask progress and pause control
+- `pomodoro/logger.py`: Added subtask support to CSV schema
+- `data/user_tasks.json`: Nested subtask format introduced and validated
+
+**Next Steps:**
+- Implement interactive UI in `subtask_ui.py`: entry fields, inline delete, immediate refresh
+- Apply theme integration and ensure .grid() responsiveness
+- Finalize Phase 2 with full Subtask Editor and real-time task modifications

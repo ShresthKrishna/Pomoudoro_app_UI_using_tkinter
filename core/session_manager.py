@@ -7,6 +7,7 @@ from pomodoro.timer_state_manager import save_timer_state, load_timer_state, cle
 from pomodoro.task_memory import get_all_tasks, update_task_memory
 from utils.storage import load_user_settings, save_user_settings
 from pomodoro.theme import theme
+from pomodoro.subtask_engine import mark_subtask_progress, get_active_subtask
 
 class SessionManager:
     def __init__(self, root):
@@ -66,17 +67,30 @@ class SessionManager:
         duration = round((completed_at - self.session_start_time).total_seconds() / 60
                          if self.session_start_time else 0)
         self.session_counts[prev_session] += 1
+
+        task = self.task_var.get().strip()
+        subtask = None
+
+        # ✅ Track subtask if Work session and a task is set
+        if prev_session == "Work" and task:
+            subtask = mark_subtask_progress(task)
+
         log_session(prev_session, completed_at,
                     self.session_counts[prev_session],
                     duration,
-                    task=self.task_var.get().strip())
+                    task=task,
+                    subtask=subtask)
 
         if prev_session == "Work":
             self.work_sessions_completed += 1
-            next_session = ("Long Break"
-                            if self.work_sessions_completed % 4 == 0
-                            else "Short Break")
-            # Decrement sessions, pause if at 0
+            next_session = "Long Break" if self.work_sessions_completed % 4 == 0 else "Short Break"
+
+            # ✅ Check if all subtasks are done
+            if task and not get_active_subtask(task):
+                self._pause_for_task_decision(next_session)
+                return
+
+            # Fallback to regular task session logic
             self.task_session_goal.set(self.task_session_goal.get() - 1)
             if self.task_session_goal.get() <= 0:
                 self._pause_for_task_decision(next_session)
