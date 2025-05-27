@@ -19,5 +19,8 @@ theme = {
     "button_end":{
         "bg": "#D32F2f",
         "fg": "#FFFFFF"
-    }
+    },
+    "entry_font": ("Segoe UI", 10),
+
+
 }

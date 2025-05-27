@@ -250,3 +250,22 @@ All notable changes to this project will be documented here.
 ### Fixed
 - Guard added to prevent duplicate subtask names under a single task
 - Debug logging added for JSON path traces and per-session subtask increments
+
+## 🐞 [May 26, 2025] – Subtask Engine and Session Flow Integration
+
+**Issue**: Subtask logic not yet integrated into session completion  
+- Fix: `mark_subtask_progress()` now called inside `session_complete_cb()`  
+- Result: Active subtask is progressed, and `completed` count is updated in JSON
+
+**Issue**: No subtask field in logger output  
+- Fix: `logger.log_session()` updated to accept and log `subtask` name  
+- Result: `session.csv` now includes optional `subtask` field per row
+
+**Issue**: JSON not saving correctly with complex nesting  
+- Fix: Created atomic `_save_all()` with debug instrumentation for path writes  
+- Added guards for duplicate subtask names per task
+
+**Validation**:
+- Subtask progress correctly incremented after Work sessions
+- Final subtask triggers session pause + task completion dialog
+- Logger and session state updates are in sync with user flow

@@ -1,5 +1,3 @@
-# features.py
-
 features = {
     "Core Timer Engine": {
         "Pomodoro session loop": True,
@@ -53,6 +51,10 @@ features = {
         "Save/resume timer state across app closes": False
     },
 
+    "Task & Subtask Integration": {
+        "Subtask-Driven Task Goal Enforcement": True  # Finalized in v1.4.2
+    },
+
     "Gamified Analytics Unlocking": {
         "Unlock activity timeline after 1 session": False,
         "Unlock sessions/day chart after 3 sessions": False,
@@ -79,6 +81,7 @@ features = {
         "Gentle 'You Showed Up' Daily Messages": False,
         "Flexible Planning Reminders (non-intrusive)": False,
         "Weekly Practice Summary & Export": False,
-        "Session Forecasting with Reflection": False
+        "Session Forecasting with Reflection": False,
+        "Session Context Mirror (Task/Subtask Display)": True  # Finalized in v1.4.2
     }
 }

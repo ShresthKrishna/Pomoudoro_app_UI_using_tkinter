@@ -7,7 +7,7 @@ from pomodoro.timer_state_manager import save_timer_state, load_timer_state, cle
 from pomodoro.task_memory import get_all_tasks, update_task_memory
 from utils.storage import load_user_settings, save_user_settings
 from pomodoro.theme import theme
-from pomodoro.subtask_engine import mark_subtask_progress, get_active_subtask
+from pomodoro.subtask_engine import mark_subtask_progress, get_active_subtask, reset_subtasks
 
 class SessionManager:
     def __init__(self, root):
@@ -120,6 +120,11 @@ class SessionManager:
               bg=theme["bg_color"], font=theme["label_font"]).pack(pady=(10, 5))
 
         def new_task():
+            current_task = self.task_var.get().strip()
+            print(f"[DEBUG] Clearing subtasks for: {current_task}")
+            if current_task:
+                reset_subtasks(current_task)
+
             self.task_var.set("")
             self.task_session_goal.set(1)
             self._just_cleared_task = True
@@ -296,3 +301,6 @@ class SessionManager:
         )
 
         self.reset_session()
+
+    def get_active_task(self) -> str:
+        return self.task_var.get().strip()

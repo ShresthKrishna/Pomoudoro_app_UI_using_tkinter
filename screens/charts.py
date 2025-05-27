@@ -55,10 +55,15 @@ def draw_pie_chart(frame, df, title="", label_key="type", value_key="total_minut
 def draw_stacked_bar_chart(frame, df, size=None, use_blit=False):
     if size is None:
         size = theme["chart_size_tall"]
+    if df.empty or "count" not in df.columns:
+        print("[DEBUG] Skipping stacked bar chart — no count data.")
+        return
+
     pivot = df.pivot(index="date", columns="type", values="count").fillna(0)
     mpl.rcParams['figure.dpi'] = 120  # or 150
     mpl.rcParams['savefig.dpi'] = 120
     fig, ax = plt.subplots(figsize=size)
+
     pivot.plot(kind="bar", stacked=True, ax=ax, colormap=theme["default_colormap"])
     ax.set_xticks(range(len(pivot.index)))
     ax.set_xticklabels(pivot.index.astype(str), rotation=45, ha="right", fontsize=8)
