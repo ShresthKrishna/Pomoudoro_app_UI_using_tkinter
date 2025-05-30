@@ -211,3 +211,57 @@
 - Subtask progress correctly incremented after Work sessions
 - Final subtask triggers session pause + task completion dialog
 - Logger and session state updates are in sync with user flow
+
+# Debug Log – Subtask Planner Phase 3 (v1.4.2)
+## Date Range: 27–30 May 2025
+
+---
+
+### 🐛 Subtask goal included completed subtasks
+- **Issue:** Task session goal increased even when all subtasks were already completed
+- **Debug Method:** Print statements inside `get_total_subtask_goal()`
+- **Resolution:** Filtered subtasks by `completed < goal`
+
+---
+
+### 🐛 Task/subtask labels not updating correctly
+- **Issue:** Session labels on Home screen remained static or mismatched
+- **Debug Method:** Manual testing + breakpoint in `update_session_info()`
+- **Resolution:** Added `get_current_subtask_name()` helper; ensured update calls on every session switch
+
+---
+
+### 🐛 Label resizing caused layout jump
+- **Issue:** Dynamic session labels caused timer section to shift on screen
+- **Debug Method:** UI stress test using varying label content lengths
+- **Resolution:** Created fixed-width `info_frame` and locked label widths with `width=40` and `anchor="center"`
+
+---
+
+### 🐛 Subtask edit UI not rendering updates
+- **Issue:** Editing subtasks didn’t reflect changes until full refresh
+- **Debug Method:** Visual inspection + tracing `populate()` flow
+- **Resolution:** Centralized UI rebuild inside `populate()`; connected edit field with manager sync
+
+---
+
+### 🐛 Subtasks not cleared on new task selection
+- **Issue:** When starting a new task, subtasks from previous task persisted
+- **Debug Method:** Session logs showed mismatch; UI reflected stale subtasks
+- **Resolution:** Added `reset_subtasks(task_name)` call in `_pause_for_task_decision()`
+
+---
+
+### 🐛 Editing main task name mid-session caused sync loss
+- **Issue:** If the user edited the task name while session was running, logs became disconnected
+- **Debug Method:** Observed broken logs and lost session mappings
+- **Resolution:** Disabled task name editing once session starts
+
+---
+
+### 🐛 Fallback logic on non-subtask tasks triggered premature session end
+- **Issue:** Tasks without subtasks were triggering session pause prematurely
+- **Debug Method:** Controlled test of session lifecycle with and without subtasks
+- **Resolution:** Guarded subtask checks in `session_complete_cb()` and clarified fallback condition
+
+---

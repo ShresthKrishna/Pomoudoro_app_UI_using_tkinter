@@ -106,12 +106,12 @@ def add_or_update_task(task_name: str, subtasks: List[Dict]):
             return
     all_tasks.append({"task": task_name, "subtasks": subtasks})
     _save_all(all_tasks)
+
+
 def get_total_subtask_goal(task_name: str) -> int:
     """
-    Returns the total number of sessions planned across all subtasks for a task.
+    Returns the total *remaining* number of sessions across all *incomplete* subtasks for a task.
     """
-    from pathlib import Path
-    import json
 
     USER_TASK_FILE = Path(__file__).resolve().parents[1] / "data" / "user_tasks.json"
     if not USER_TASK_FILE.exists():
@@ -122,7 +122,11 @@ def get_total_subtask_goal(task_name: str) -> int:
 
     for entry in all_tasks:
         if entry["task"] == task_name:
-            return sum(sub.get("goal", 0) for sub in entry.get("subtasks", []))
+            return sum(
+                sub.get("goal", 0) - sub.get("completed", 0)
+                for sub in entry.get("subtasks", [])
+                if sub.get("completed", 0) < sub.get("goal", 0)
+            )
     return 0
 
 
@@ -140,6 +144,8 @@ def sync_task_goal_if_needed(task_var, task_name: str):
     if total_subtask_goal > current_goal:
         task_var.set(total_subtask_goal)
         print(f"[DEBUG] Task goal updated to match subtasks: {total_subtask_goal}")
+
+
 def get_current_subtask_name(task_name: str) -> Optional[str]:
     """
     Returns the name of the first incomplete subtask for the given task.
@@ -150,3 +156,21 @@ def get_current_subtask_name(task_name: str) -> Optional[str]:
                 if sub["completed"] < sub["goal"]:
                     return sub["name"]
     return None
+
+
+def has_any_subtask(task_name: str) -> bool:
+    """
+    Returns True if the given task has any subtasks defined, else False.
+    """
+
+    USER_TASK_FILE = Path(__file__).resolve().parents[1] / "data" / "user_tasks.json"
+    if not USER_TASK_FILE.exists():
+        return False
+
+    with open(USER_TASK_FILE, "r", encoding="utf-8") as f:
+        all_tasks = json.load(f)
+
+    for entry in all_tasks:
+        if entry["task"] == task_name:
+            return bool(entry.get("subtasks"))
+    return False

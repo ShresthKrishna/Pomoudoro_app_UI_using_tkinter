@@ -415,3 +415,13 @@ Daily progress journal for the Pomodoro Productivity App.
 [✓] SessionManager: update_session_info() hooks added
 [✓] Reset subtasks and session UI on new task
 [✓] GUI team sync: info_frame layout documented
+
+### Subtask Planner Phase 3 (v1.4.2)
+✔ Subtask-to-task session sync finalized (counts only unfinished)
+✔ Task editing UI locked during active session
+✔ Session info labels display task + subtask dynamically
+✔ Subtask list UI rebuilt with ✎ Edit support
+✔ info_frame added for layout-stable context mirror
+✔ Synced subtask label on session start/end/reset
+✔ Removed legacy session label (now modular)
+✔ Tooltip added to lock manual goal input

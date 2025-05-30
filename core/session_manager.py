@@ -7,7 +7,7 @@ from pomodoro.timer_state_manager import save_timer_state, load_timer_state, cle
 from pomodoro.task_memory import get_all_tasks, update_task_memory
 from utils.storage import load_user_settings, save_user_settings
 from pomodoro.theme import theme
-from pomodoro.subtask_engine import mark_subtask_progress, get_active_subtask, reset_subtasks, get_current_subtask_name
+from pomodoro.subtask_engine import has_any_subtask, mark_subtask_progress, get_active_subtask, reset_subtasks, get_current_subtask_name
 
 class SessionManager:
     def __init__(self, root):
@@ -86,7 +86,7 @@ class SessionManager:
             next_session = "Long Break" if self.work_sessions_completed % 4 == 0 else "Short Break"
 
             # ✅ Check if all subtasks are done
-            if task and not get_active_subtask(task):
+            if task and has_any_subtask(task) and not get_active_subtask(task):
                 self._pause_for_task_decision(next_session)
                 return
 
@@ -149,6 +149,8 @@ class SessionManager:
             print(f"[DEBUG] Clearing subtasks for: {current_task}")
             if current_task:
                 reset_subtasks(current_task)
+            if hasattr(self, "task_entry_widget"):
+                self.task_entry_widget.configure(state="normal")
 
             self.task_var.set("")
             self.task_session_goal.set(1)
@@ -158,6 +160,7 @@ class SessionManager:
             # Fully reset timer state and UI
             self.timer_engine.reset()
             clear_timer_state()
+            self.set_subtask_editable(True)
             self.session_type_var.set("Work")
             if self.session_label:
                 self.session_label.config(text="Work Session 1")
@@ -239,6 +242,8 @@ class SessionManager:
         if task_name:
             update_task_memory(task_name)
             self.all_tasks = get_all_tasks()
+        if hasattr(self, "task_entry_widget"):
+            self.task_entry_widget.configure(state="disabled")
 
         session_type = self.session_type_var.get()
         self.timer_engine.update_durations({k: self.duration_vars[k].get() * 60 for k in self.duration_vars})
@@ -253,6 +258,7 @@ class SessionManager:
             "task_sessions_remaining": self.task_session_goal.get(),
             "timestamp": datetime.now().isoformat()
         })
+        self.set_subtask_editable(False)
 
     def toggle_pause(self, pause_button):
         save_timer_state({
@@ -272,10 +278,13 @@ class SessionManager:
             self.timer_engine.pause()
             pause_button.config(text="Resume")
         self.is_paused = not self.is_paused
+        self.set_subtask_editable(self.is_paused)
 
     def reset_session(self):
         self.timer_engine.reset()
         self.update_session_info()
+        if hasattr(self, "task_entry_widget"):
+            self.task_entry_widget.configure(state="normal")
 
         for key in self.session_counts:
             self.session_counts[key] = 0
@@ -287,6 +296,15 @@ class SessionManager:
             self.session_label.config(text="Work Session 1")
         clear_timer_state()
         self.set_start_button_state("start")
+        self.set_subtask_editable(True)
+
+    def set_subtask_editable(self, editable=True):
+        if hasattr(self, "_subtask_controls"):
+            for w in self._subtask_controls.values():
+                try:
+                    w.configure(state="normal" if editable else "disabled")
+                except Exception as e:
+                    print(f"[DEBUG] Subtask widget toggle failed: {e}")
 
     def resume_if_possible(self):
         state = load_timer_state()

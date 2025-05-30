@@ -284,3 +284,25 @@ All notable changes to this project will be documented here.
 - Subtask session updates now visible in real time
 - `reset_subtasks()` clears completed progress when switching tasks
 - Visual consistency in layout via fixed width & grid anchor
+
+## [v1.4.2] — 2025-05-30
+### Added
+- Subtask-Driven Task Goal Enforcement
+  • Task session goals auto-raise to match only remaining subtask load
+  • Manual goal input disabled when subtasks exist
+  • Tooltip: “Goal is controlled by subtasks.”
+
+- Session Context Mirror
+  • Live dynamic display of Task + Subtask below timer
+  • Updates at start/end/switch across session lifecycle
+  • Special Break label: “Break – Next: [Subtask]”
+
+- Subtask Editing Support
+  • Subtask rows now editable inline (✎ button)
+  • Allowed when session is paused or not started
+
+### Fixed
+- Task goal inflation from already completed subtasks
+- Session label shifting on varying content lengths
+- Session hang on subtaskless tasks with leftover sync
+- Editing lock added for task name mid-session

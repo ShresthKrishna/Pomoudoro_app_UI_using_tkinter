@@ -10,6 +10,7 @@ from pomodoro.subtask_engine import (
 
 
 def render_subtask_panel(parent, manager):
+    current_editing = {"name": None}
     container = ttk.LabelFrame(parent, text="Subtasks", style="Subtask.TLabelframe")
     container.columnconfigure(0, weight=1)
 
@@ -29,7 +30,7 @@ def render_subtask_panel(parent, manager):
 
         subs = get_subtasks(task_name)
 
-        headers = ("Name", "Goal", "Done", "")
+        headers = ("Name", "Goal", "Done", "", "Edit")
         for c, h in enumerate(headers):
             tk.Label(body, text=h, bg=theme["bg_color"], font=theme["label_font"]).grid(row=0, column=c, padx=5)
 
@@ -42,10 +43,24 @@ def render_subtask_panel(parent, manager):
                 body,
                 text="✕",
                 width=3,
-                command=lambda n=sub["name"]: (delete_subtask(task_name, n), populate())
+                command=lambda n=sub["name"]: (_delete_and_refresh(body, manager, n))
             ).grid(row=r, column=3, padx=5)
 
-        # Row for adding new subtask
+            ttk.Button(
+                body,
+                text="✎",
+                width=3,
+                command=lambda n=sub["name"], g=sub["goal"]: (
+                    name_entry.delete(0, "end"),
+                    name_entry.insert(0, n),
+                    spin_goal.delete(0, "end"),
+                    spin_goal.insert(0, g),
+                    add_btn.config(text="💾 Save"),
+                    current_editing.update({"name": n})
+                )
+            ).grid(row=r, column=4, padx=5)
+
+        # Row for adding/editing subtask
         add_row = len(subs) + 2
         tk.Label(body, text="New Subtask:", bg=theme["bg_color"]).grid(row=add_row, column=0, padx=5, pady=(10, 2))
 
@@ -55,27 +70,43 @@ def render_subtask_panel(parent, manager):
         spin_goal = tk.Spinbox(body, from_=1, to=99, width=5, font=theme["entry_font"])
         spin_goal.grid(row=add_row, column=2, padx=5)
 
-        def _add():
+        manager._subtask_controls = {
+            "name_entry": name_entry,
+            "spin_goal": spin_goal
+        }
+
+        def save_or_add():
             name = name_entry.get().strip()
             try:
                 goal = int(spin_goal.get())
-                add_subtask(task_name, name, goal)
-                sync_task_goal_if_needed(manager.task_session_goal, task_name)
-            except ValueError as e:
-                print(f"[DEBUG] {e}")
-                tk.messagebox.showinfo("Subtask Error", str(e))
-            else:
-                name_entry.delete(0, "end")
-                populate()
+            except ValueError:
+                tk.messagebox.showinfo("Subtask Error", "Goal must be a number.")
+                return
 
-        ttk.Button(body, text="+ Add", command=_add).grid(row=add_row, column=3, pady=5, sticky="e")
+            if not name:
+                return
+
+            if current_editing["name"]:
+                delete_subtask(task_name, current_editing["name"])
+
+            add_subtask(task_name, name, goal)
+            sync_task_goal_if_needed(manager.task_session_goal, task_name)
+
+            name_entry.delete(0, "end")
+            spin_goal.delete(0, "end")
+            spin_goal.insert(0, "1")
+            current_editing["name"] = None
+            add_btn.config(text="+ Add")
+            populate()
+
+        add_btn = ttk.Button(body, text="+ Add", command=save_or_add)
+        add_btn.grid(row=add_row, column=3, pady=5, sticky="e")
 
     def _delete_and_refresh(frame: tk.Frame, manager, subtask_name: str) -> None:
         task = manager.get_active_task()
         delete_subtask(task, subtask_name)
         sync_task_goal_if_needed(manager.task_session_goal, task)
         populate()
-
 
     def toggle():
         if expanded.get():
