@@ -140,3 +140,13 @@ def sync_task_goal_if_needed(task_var, task_name: str):
     if total_subtask_goal > current_goal:
         task_var.set(total_subtask_goal)
         print(f"[DEBUG] Task goal updated to match subtasks: {total_subtask_goal}")
+def get_current_subtask_name(task_name: str) -> Optional[str]:
+    """
+    Returns the name of the first incomplete subtask for the given task.
+    """
+    for entry in _load_all():
+        if entry["task"] == task_name:
+            for sub in entry.get("subtasks", []):
+                if sub["completed"] < sub["goal"]:
+                    return sub["name"]
+    return None

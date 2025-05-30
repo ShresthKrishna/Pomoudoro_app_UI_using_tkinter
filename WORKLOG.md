@@ -407,3 +407,11 @@ Daily progress journal for the Pomodoro Productivity App.
 - Implement interactive UI in `subtask_ui.py`: entry fields, inline delete, immediate refresh
 - Apply theme integration and ensure .grid() responsiveness
 - Finalize Phase 2 with full Subtask Editor and real-time task modifications
+
+### v1.4.2 Milestone (Completed)
+[✓] Subtask-Driven Task Goal Enforcement
+[✓] Session Context Mirror (Live task/subtask display)
+[✓] Grid-based layout stabilization in home_screen
+[✓] SessionManager: update_session_info() hooks added
+[✓] Reset subtasks and session UI on new task
+[✓] GUI team sync: info_frame layout documented

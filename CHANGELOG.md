@@ -269,3 +269,18 @@ All notable changes to this project will be documented here.
 - Subtask progress correctly incremented after Work sessions
 - Final subtask triggers session pause + task completion dialog
 - Logger and session state updates are in sync with user flow
+
+## [v1.4.2] — 2025-05-29
+### Added
+- Subtask-to-Task Session Goal Sync:
+  • Tasks now auto-adjust goal upward to match subtask total
+  • Task goal never decreases automatically
+
+- Session Context Mirror UI:
+  • Replaced static session labels with task + subtask info
+  • New dynamic label layout in `info_frame` below timer
+
+### Improved
+- Subtask session updates now visible in real time
+- `reset_subtasks()` clears completed progress when switching tasks
+- Visual consistency in layout via fixed width & grid anchor

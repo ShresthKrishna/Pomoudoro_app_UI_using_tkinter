@@ -16,7 +16,7 @@ def run_app():
 
     root.title("Pomodoro Productivity Timer")
     root.geometry("400x600")
-    root.minsize(300, 400)
+    root.minsize(500, 800)
     root.config(bg=theme["bg_color"])
 
     # Allow the single column to stretch:

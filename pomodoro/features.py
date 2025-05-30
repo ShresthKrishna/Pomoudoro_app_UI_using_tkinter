@@ -52,7 +52,8 @@ features = {
     },
 
     "Task & Subtask Integration": {
-        "Subtask-Driven Task Goal Enforcement": True  # Finalized in v1.4.2
+        "Subtask-Driven Task Goal Enforcement": True,  # Finalized in v1.4.2
+        "Task Editing (name + goal)": True             # Added in v1.4.2
     },
 
     "Gamified Analytics Unlocking": {
@@ -75,12 +76,12 @@ features = {
     },
 
     "Motivational Habit Design": {
-        "One Honest Intent Prompt (before session)": False,
-        "End Session Reflection (How was this session?)": False,
+        "One Honest Intent Prompt (before session)": True,   # Promoted for v1.4.3
+        "End Session Reflection (How was this session?)": True,  # Promoted for v1.4.3
         "Streaks by Behavior or Task Type": False,
         "Gentle 'You Showed Up' Daily Messages": False,
         "Flexible Planning Reminders (non-intrusive)": False,
-        "Weekly Practice Summary & Export": False,
+        "Weekly Practice Summary & Export": True,  # Promoted for v1.4.3
         "Session Forecasting with Reflection": False,
         "Session Context Mirror (Task/Subtask Display)": True  # Finalized in v1.4.2
     }

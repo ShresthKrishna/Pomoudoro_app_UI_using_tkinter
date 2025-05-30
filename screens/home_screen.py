@@ -37,16 +37,30 @@ def render_home_screen(frame, manager):
         font=theme["timer_font"],
         bg=theme["bg_color"]
     )
-    manager.timer_label.grid(row=2, column=0, sticky="ew")
+    manager.timer_label.grid(row=2, column=0, columnspan=3, pady=20)
 
     # 3: Session label
-    manager.session_label = tk.Label(
-        frame,
-        text="Work Session 1",
-        font=theme["label_font"],
-        bg=theme["bg_color"]
+    info_frame = tk.Frame(frame, bg=theme["highlight_bg"])
+    info_frame.grid(row=3, column=0, columnspan=3, padx=20, pady=(5, 5), sticky="ew")
+    info_frame.columnconfigure(0, weight=1)
+
+    manager.task_heading = tk.Label(
+        info_frame,
+        width=40,
+        anchor="center",
+        font=theme["heading_font"],
+        bg=theme["highlight_bg"]
     )
-    manager.session_label.grid(row=3, column=0, pady=(5, 0), sticky="ew")
+    manager.task_heading.grid(row=0, column=0, sticky="ew", pady=(2, 0))
+
+    manager.subtask_label = tk.Label(
+        info_frame,
+        width=40,
+        anchor="center",
+        font=theme["subheading_font"],
+        bg=theme["highlight_bg"]
+    )
+    manager.subtask_label.grid(row=1, column=0, sticky="ew", pady=(0, 5))
 
     # 4: Task Plan box
     task_frame = tk.LabelFrame(

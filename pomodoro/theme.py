@@ -21,6 +21,23 @@ theme = {
         "fg": "#FFFFFF"
     },
     "entry_font": ("Segoe UI", 10),
+"heading_font": ("Courier", 18, "bold"),
+"subheading_font": ("Courier", 14, "italic"),
+"chart_title_font": ("Courier", 13, "bold italic"),
 
+"section_bg": "#fffce8",
+"highlight_bg": "#fffae5",
+
+"shadow_style": {
+    "offset": (2, 2),
+    "blur": 6,
+    "color": "#ccc"
+},
+
+"cta_button": {
+    "bg": "#1976D2",
+    "fg": "#FFFFFF",
+    "hover_bg": "#1565C0"
+}
 
 }

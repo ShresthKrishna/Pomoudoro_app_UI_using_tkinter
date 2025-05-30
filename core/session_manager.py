@@ -7,7 +7,7 @@ from pomodoro.timer_state_manager import save_timer_state, load_timer_state, cle
 from pomodoro.task_memory import get_all_tasks, update_task_memory
 from utils.storage import load_user_settings, save_user_settings
 from pomodoro.theme import theme
-from pomodoro.subtask_engine import mark_subtask_progress, get_active_subtask, reset_subtasks
+from pomodoro.subtask_engine import mark_subtask_progress, get_active_subtask, reset_subtasks, get_current_subtask_name
 
 class SessionManager:
     def __init__(self, root):
@@ -74,7 +74,7 @@ class SessionManager:
         # ✅ Track subtask if Work session and a task is set
         if prev_session == "Work" and task:
             subtask = mark_subtask_progress(task)
-
+            self.update_session_info()
         log_session(prev_session, completed_at,
                     self.session_counts[prev_session],
                     duration,
@@ -99,6 +99,31 @@ class SessionManager:
             next_session = "Work"
 
         self._resume_post_task(next_session)
+
+    def update_session_info(self):
+        task = self.task_var.get().strip()
+        session_type = self.session_type_var.get()
+        session_count = self.session_counts.get(session_type, 0) + 1
+
+        subtask = None
+        if task:
+            subtask = get_current_subtask_name(task)
+            print(f"[DEBUG] update_session_info | Task: {task} | Session: {session_type}")
+            print(f"[DEBUG] Fetched subtask: {subtask}")
+
+        if hasattr(self, "task_heading"):
+            self.task_heading.config(text=task or "(No Task Selected)")
+
+        if hasattr(self, "subtask_label"):
+            if session_type == "Work":
+                self.subtask_label.config(
+                    text=f"{subtask or 'No Subtask'} : {session_type} Session {session_count}"
+                )
+            else:
+                self.subtask_label.config(
+                    text=f"{subtask or 'No Subtask'} : {session_type} Session {session_count}"
+                )
+
 
     def _pause_for_task_decision(self, next_session):
         from tkinter import Toplevel, Label, Button, Spinbox
@@ -172,6 +197,8 @@ class SessionManager:
 
     def _resume_post_task(self, next_session):
         self.session_type_var.set(next_session)
+        self.session_type_var.set(next_session)
+        self.update_session_info()
         if self.session_label:
             self.session_label.config(text=f"{next_session} Session {self.session_counts[next_session] + 1}")
         self.session_start_time = datetime.now()
@@ -205,6 +232,7 @@ class SessionManager:
 
     def on_start(self):
         # Record start time
+
         self.session_start_time = datetime.now()
         # Persist task memory
         task_name = self.task_var.get().strip()
@@ -215,6 +243,7 @@ class SessionManager:
         session_type = self.session_type_var.get()
         self.timer_engine.update_durations({k: self.duration_vars[k].get() * 60 for k in self.duration_vars})
         self.timer_engine.start(session_type)
+        self.update_session_info()
         save_timer_state({
             "active": True,
             "session_type": session_type,
@@ -246,6 +275,8 @@ class SessionManager:
 
     def reset_session(self):
         self.timer_engine.reset()
+        self.update_session_info()
+
         for key in self.session_counts:
             self.session_counts[key] = 0
         self.work_sessions_completed = 0
