@@ -74,6 +74,8 @@ class SessionManager:
         # ✅ Track subtask if Work session and a task is set
         if prev_session == "Work" and task:
             subtask = mark_subtask_progress(task)
+            if hasattr(self, "refresh_subtask_panel"):
+                self.refresh_subtask_panel()
             self.update_session_info()
         log_session(prev_session, completed_at,
                     self.session_counts[prev_session],

@@ -124,4 +124,6 @@ def render_subtask_panel(parent, manager):
                     command=toggle)
     btn.grid(row=0, column=0, sticky="w", padx=5, pady=5)
 
+    manager.refresh_subtask_panel = populate
+
     return container
