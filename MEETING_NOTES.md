@@ -24,3 +24,12 @@
 - Feature stacking can now resume safely from this point
 
 **Next Step:** Begin planning and implementing Subtask Planner as a user-defined task breakdown engine.
+## v1.4.3 Kickoff — Intent & Reflection Loop  
+🗓 Date: 2025-06-02
+
+- ✅ Honest Intent Prompt implemented:
+  • Shown once per app launch, before first Work session.
+  • Modal includes short input box (100 char max), Start and Cancel buttons.
+  • Prompt fully styled using theme.highlight_bg.
+  • Integrated cleanly with `start_session()` logic.
+  • Guarded by `has_prompted_intent` to ensure one-time appearance.

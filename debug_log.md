@@ -265,3 +265,16 @@
 - **Resolution:** Guarded subtask checks in `session_complete_cb()` and clarified fallback condition
 
 ---
+## [2025-06-02] — Honest Intent Prompt Integration
+
+- Bug: Prompt reappeared on every Work session start.
+  • Fix: Scoped `has_prompted_intent = False` to global app state.
+  • Validation: Only shows once per app launch, not per task.
+
+- Bug: Timer started in background before prompt was resolved.
+  • Fix: Session start callback delayed until user confirms intent.
+  • Validation: Timer now starts only after Start button is clicked.
+
+- Bug: Modal layout caused frame overlap with timer section.
+  • Fix: Fixed-width layout and centralized alignment using grid.
+  • Validation: UI remains visually stable during prompt display.

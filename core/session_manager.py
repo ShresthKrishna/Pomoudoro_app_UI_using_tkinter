@@ -8,7 +8,7 @@ from pomodoro.task_memory import get_all_tasks, update_task_memory
 from utils.storage import load_user_settings, save_user_settings
 from pomodoro.theme import theme
 from pomodoro.subtask_engine import has_any_subtask, mark_subtask_progress, get_active_subtask, reset_subtasks, get_current_subtask_name
-
+from screens.intent_prompt import show_intent_prompt
 class SessionManager:
     def __init__(self, root):
         self.root = root
@@ -25,6 +25,7 @@ class SessionManager:
         self.set_start_button_state = lambda state: None  # will be assigned later
         self._tick_loop_id = None
         self._tick_loop_running = False
+        self.has_prompted_intent = False
 
         # Duration settings
         self.duration_vars = {
@@ -236,31 +237,37 @@ class SessionManager:
         self.timer_engine.update_durations({k: self.duration_vars[k].get() * 60 for k in self.duration_vars})
 
     def on_start(self):
-        # Record start time
-
-        self.session_start_time = datetime.now()
-        # Persist task memory
-        task_name = self.task_var.get().strip()
-        if task_name:
-            update_task_memory(task_name)
-            self.all_tasks = get_all_tasks()
-        if hasattr(self, "task_entry_widget"):
-            self.task_entry_widget.configure(state="disabled")
-
         session_type = self.session_type_var.get()
-        self.timer_engine.update_durations({k: self.duration_vars[k].get() * 60 for k in self.duration_vars})
-        self.timer_engine.start(session_type)
-        self.update_session_info()
-        save_timer_state({
-            "active": True,
-            "session_type": session_type,
-            "remaining_seconds": self.timer_engine.remaining,
-            "session_counts": self.session_counts,
-            "task": task_name,
-            "task_sessions_remaining": self.task_session_goal.get(),
-            "timestamp": datetime.now().isoformat()
-        })
-        self.set_subtask_editable(False)
+
+        def proceed_start():
+            self.session_start_time = datetime.now()
+            task_name = self.task_var.get().strip()
+
+            if task_name:
+                update_task_memory(task_name)
+                self.all_tasks = get_all_tasks()
+
+            self.timer_engine.update_durations({
+                k: self.duration_vars[k].get() * 60 for k in self.duration_vars
+            })
+            self.timer_engine.start(session_type)
+            self.update_session_info()
+
+            save_timer_state({
+                "active": True,
+                "session_type": session_type,
+                "remaining_seconds": self.timer_engine.remaining,
+                "session_counts": self.session_counts,
+                "task": task_name,
+                "task_sessions_remaining": self.task_session_goal.get(),
+                "timestamp": datetime.now().isoformat()
+            })
+
+        # Inject modal if first Work session
+        if session_type == "Work":
+            show_intent_prompt(self.root, proceed_start)
+        else:
+            proceed_start()
 
     def toggle_pause(self, pause_button):
         save_timer_state({

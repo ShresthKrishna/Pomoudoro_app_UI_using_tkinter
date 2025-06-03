@@ -425,3 +425,13 @@ Daily progress journal for the Pomodoro Productivity App.
 ✔ Synced subtask label on session start/end/reset
 ✔ Removed legacy session label (now modular)
 ✔ Tooltip added to lock manual goal input
+
+## 📅 2025-06-01 to 2025-06-03
+### [v1.4.3] – Intent & Reflection Loop
+
+#### Task 1: Honest Intent Prompt (Complete)
+- Created a modal shown once per app launch, before first Work session.
+- Prompt includes input field (max 100 chars), Start and Cancel buttons.
+- Added `has_prompted_intent` flag (resets only on app restart).
+- Integrated prompt into `start_session()` logic for Work sessions.
+- Ensured timer cannot start until intent prompt is resolved.

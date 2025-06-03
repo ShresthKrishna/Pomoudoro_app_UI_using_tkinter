@@ -306,3 +306,19 @@ All notable changes to this project will be documented here.
 - Session label shifting on varying content lengths
 - Session hang on subtaskless tasks with leftover sync
 - Editing lock added for task name mid-session
+
+## [v1.4.3-pre] — 2025-06-02
+
+### Added
+- One-time Honest Intent Prompt
+  - Triggered before the first Work session per app run.
+  - Captures short motivational statement (max 100 characters).
+  - Integrated modal UI with dimmed overlay and theme styling.
+  - Guarded with `has_prompted_intent` flag to prevent repeated display.
+  - Integrated into `session_manager.py → start_session()`.
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
