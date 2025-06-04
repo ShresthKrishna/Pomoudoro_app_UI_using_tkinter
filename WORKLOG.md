@@ -435,3 +435,31 @@ Daily progress journal for the Pomodoro Productivity App.
 - Added `has_prompted_intent` flag (resets only on app restart).
 - Integrated prompt into `start_session()` logic for Work sessions.
 - Ensured timer cannot start until intent prompt is resolved.
+
+## [v1.4.3] — Session Continuation & Resume Tracking
+
+- Implemented session resume with real start time recovery
+- Added `was_resumed` and `was_interrupted` flags to SessionManager
+- Hooked WM_DELETE_WINDOW to mark interrupted sessions
+- All resumed sessions now correctly log `resumed=True`, `interrupted=True` in session.csv
+
+## 📅 2025-06-05
+
+**Work Done:**
+- Completed Task 3 for v1.4.3: Session Continuation + Resume Tracking.
+- `session_manager.py` now supports resume with original `start_time` recovery.
+- Interruption flag (`was_interrupted`) and resume flag (`was_resumed`) integrated.
+- Hooked `WM_DELETE_WINDOW` to mark in-progress sessions as interrupted before exit.
+- CSV logging now captures resumed and interrupted flags per session.
+- Controlled tests confirmed accurate logging and state recovery.
+
+**Files Modified:**
+- `core/session_manager.py`: Integrated resume tracking and guard logic.
+- `app.py`: Hooked app close event to log active session as interrupted.
+- `pomodoro/logger.py`: Extended `log_session()` to accept `resumed` and `interrupted`.
+- `data/session.csv`: Schema includes `resumed` and `interrupted` columns.
+
+**Next Steps:**
+- Begin Task 4: Add focus rating and intent tracking to reflection modal
+- Extend CSV to store reflection data
+- Update UI to support rating/intent fields after session end

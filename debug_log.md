@@ -278,3 +278,22 @@
 - Bug: Modal layout caused frame overlap with timer section.
   • Fix: Fixed-width layout and centralized alignment using grid.
   • Validation: UI remains visually stable during prompt display.
+
+## 🐞 [June 5, 2025] – Session Continuation & Resume Tracking
+
+**Issue**: Session resume lost original start time  
+- Fix: `session_manager.py` now restores `start_time` from `timer_state.json`  
+- Result: Accurate durations are preserved across app restarts
+
+**Issue**: App exit did not mark sessions as interrupted  
+- Fix: Hooked into `WM_DELETE_WINDOW` inside `app.py`  
+- Result: If timer is active, `interrupted = True` is saved in state
+
+**Issue**: Resumed sessions did not show metadata in logs  
+- Fix: `logger.py` updated to accept and write `resumed` and `interrupted` flags  
+- Result: All relevant session rows in `session.csv` now include correct flags
+
+**Validation**:  
+- App closes mid-session → `interrupted = True` stored  
+- On reopen + resume → `resumed = True`, same `start_time` restored  
+- Logs now reflect accurate session continuity markers  

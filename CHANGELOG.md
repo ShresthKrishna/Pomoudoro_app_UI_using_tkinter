@@ -322,3 +322,19 @@ All notable changes to this project will be documented here.
 
 ### Fixed
 - N/A
+
+## [v1.4.3-pre] — 2025-06-05
+
+### Added
+- Session resume tracking with original start time recovery
+- `resumed` and `interrupted` flags in `session.csv` for better behavioral insights
+- Hook into `WM_DELETE_WINDOW` to detect mid-session exits
+- Timer state now preserves minimal recovery data if session is active on close
+
+### Changed
+- Resume flow now uses session metadata to ensure consistency across runs
+- Logger accepts and logs behavioral flags alongside core session fields
+
+### Fixed
+- Session resume inconsistency: previously started new session instead of resuming
+- Edge case where logs were missing interruption/resume data

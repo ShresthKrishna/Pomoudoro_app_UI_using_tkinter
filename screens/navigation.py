@@ -2,7 +2,6 @@ import tkinter as tk
 from pomodoro.theme import theme
 
 def create_navigation(parent, show_frame_callback):
-    # parent is already the top_frame you grid’ed in app.py
     parent.rowconfigure(0, weight=1)
     parent.columnconfigure(0, weight=1)
 
@@ -20,7 +19,6 @@ def create_navigation(parent, show_frame_callback):
 def create_bottom_controls(parent, manager):
     parent.rowconfigure(0, weight=1)
     parent.columnconfigure(0, weight=1)
-    # we need a stable ref for the Pause button so toggle_pause can update its text
     pause_btn = None
 
     buttons = {}

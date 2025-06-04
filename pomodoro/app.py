@@ -1,8 +1,11 @@
 import tkinter as tk
 from pomodoro.theme import theme
+from pomodoro.timer_state_manager import save_timer_state
 from screens.navigation import create_navigation, create_bottom_controls
 from screens.layout import create_all_screens
 from core.session_manager import SessionManager
+from datetime import datetime
+
 
 def run_app():
     root = tk.Tk()
@@ -58,7 +61,27 @@ def run_app():
     session_manager.start_tick_loop()
     session_manager.show_frame("home")
 
+    def on_close():
+        # Save minimal state if session is active
+        if session_manager.timer_engine.is_running:
+            save_timer_state({
+                "active": True,
+                "session_type": session_manager.session_type_var.get(),
+                "remaining_seconds": session_manager.timer_engine.remaining,
+                "session_counts": session_manager.session_counts,
+                "task": session_manager.task_var.get().strip(),
+                "task_sessions_remaining": session_manager.task_session_goal.get(),
+                "timestamp": session_manager.session_start_time.isoformat()
+                if session_manager.session_start_time else datetime.now().isoformat(),
+                "interrupted": True
+            })
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", on_close)
+
     root.mainloop()
+
+
 
 if __name__ == "__main__":
     run_app()
