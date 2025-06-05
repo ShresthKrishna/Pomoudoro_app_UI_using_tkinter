@@ -90,9 +90,12 @@ def render_home_screen(frame, manager):
         state="normal"
     )
     manager.task_entry_widget = task_combo
-
-    # task_combo.config(width=30)
     task_combo.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=5)
+    # … filtering logic …
+    task_combo.bind(
+        "<<ComboboxSelected>>",
+        lambda e: manager.on_task_fetched(manager.task_var.get())
+    )
     if hasattr(manager, "_just_cleared_task") and manager._just_cleared_task:
         task_combo.focus_set()
         manager._just_cleared_task = False

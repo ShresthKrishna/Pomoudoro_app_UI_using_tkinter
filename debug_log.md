@@ -297,3 +297,30 @@
 - App closes mid-session → `interrupted = True` stored  
 - On reopen + resume → `resumed = True`, same `start_time` restored  
 - Logs now reflect accurate session continuity markers  
+
+## 🐞 [June 5, 2025] – Session Count Sync + Task Selection Recovery
+
+**Issue**: Timer didn’t start next Work session after Break  
+- Fix: Called `_resume_post_task(task, "Work")` inside `session_complete_cb()`  
+- Result: Timer auto-continues through session cycles
+
+**Issue**: Timer restored state but tick loop didn’t restart  
+- Fix: Added `start_tick_loop()` after `start_from(...)` in `resume_if_possible()`  
+- Result: Countdown resumes visually and logically after resume
+
+**Issue**: `_resume_post_task()` call failed due to missing argument  
+- Fix: Updated all call sites to pass both task and next_session string  
+- Result: Prevented crash on session transitions
+
+**Issue**: Selecting old tasks didn’t sync session count with subtasks  
+- Fix: Added `on_task_fetched()` in SessionManager to recompute and apply correct count  
+- Result: Session goal reflects actual remaining subtasks
+
+**Issue**: Session goal inflated on task scroll and never reset  
+- Fix: Sync logic now sets task goal = sum of (subtask.goal - completed) or 1  
+- Result: Goal always matches real subtask demand
+
+**Validation**:  
+- Task selection updates session count in real time  
+- Timer transitions correctly across Work–Break cycles  
+- Session resumes include visual + logical state recovery  

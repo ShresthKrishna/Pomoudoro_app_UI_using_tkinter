@@ -70,12 +70,17 @@ class SessionManager:
 
     def session_complete_cb(self, prev_session, count):
         completed_at = datetime.now()
-        duration = round((completed_at - self.session_start_time).total_seconds() / 60
-                         if self.session_start_time else 0)
+        duration = round((completed_at - self.session_start_time).total_seconds(), 2)
+        self.stop_tick_loop()
+
         self.session_counts[prev_session] += 1
+        session_number = self.session_counts[prev_session]
 
         task = self.task_var.get().strip()
         subtask = None
+
+        print(f"[DEBUG] session_complete_cb → Previous session: {prev_session}")
+        print(f"[DEBUG] session_complete_cb → Duration: {duration} seconds")
 
         # ✅ Track subtask if Work session and a task is set
         if prev_session == "Work" and task:
@@ -84,41 +89,58 @@ class SessionManager:
                 self.refresh_subtask_panel()
             self.update_session_info()
 
+        # ✅ Log the completed session — including Work now
+        log_session(
+            session_type=prev_session,
+            start_time=self.session_start_time,
+            end_time=completed_at,
+            duration_minutes=duration,
+            task=task,
+            subtask=subtask,
+            resumed=getattr(self, "was_resumed", False),
+            interrupted=getattr(self, "was_interrupted", False),
+            completed=True,
+            session_number=session_number
+        )
+
+        # ✅ Reset flags for next session
+        self.was_resumed = False
+        self.was_interrupted = False
+
+        # Decide next session type
         if prev_session == "Work":
             self.work_sessions_completed += 1
             next_session = "Long Break" if self.work_sessions_completed % 4 == 0 else "Short Break"
+            print(f"[DEBUG] Work session completed → Next session: {next_session}")
 
-            # ✅ Check if task is finished
+            # Check if task goal reached
             if task and (
                     (has_any_subtask(task) and not get_active_subtask(task)) or
-                    self.task_session_goal.get() <= 1  # about to hit 0 after decrement
+                    self.task_session_goal.get() <= 1
             ):
+                print("[DEBUG] Task completed — triggering task decision dialog")
                 self._pause_for_task_decision(next_session)
                 return
-
-            # Otherwise, continue normally
-            self._post_session_routing(task, next_session)
+            else:
+                self._post_session_routing(task, next_session)
+                return
 
         else:
-            # Not a Work session → log immediately
-            log_session(prev_session, completed_at,
-                        self.session_counts[prev_session],
-                        duration,
-                        task=task,
-                        subtask=subtask,
-                        resumed=getattr(self, "was_resumed", False),
-                        interrupted=getattr(self, "was_interrupted", False),
-                        completed=True)
-
             next_session = "Work"
-            self._resume_post_task(next_session)
+            print(f"[DEBUG] Break session completed → Switching to next session: {next_session}")
+            task = self.task_var.get().strip()
+            self._resume_post_task(task, next_session)
 
     def _post_session_routing(self, task, next_session):
+        # Deduct one session from the remaining goal
         self.task_session_goal.set(self.task_session_goal.get() - 1)
-        if self.task_session_goal.get() <= 0:
+
+        if task and self.task_session_goal.get() <= 0:
+            # If no more sessions left for this task, prompt user
             self._pause_for_task_decision(next_session)
         else:
-            self._resume_post_task(next_session)
+            # Otherwise, immediately resume into the next session
+            self._resume_post_task(task, next_session)
 
     def update_session_info(self):
         task = self.task_var.get().strip()
@@ -163,14 +185,16 @@ class SessionManager:
                 self.last_intent_fulfilled = intent_fulfilled
 
                 log_session(
-                    "Work",
-                    datetime.now(),
-                    self.session_counts["Work"],
-                    0,  # Adjust if needed
-                    task=self.task_var.get().strip(),
+                    session_type="Work",
+                    start_time=self.session_start_time,
+                    end_time=datetime.now(),
+                    duration_minutes=round((datetime.now() - self.session_start_time).total_seconds(), 2),
+                    task=  self.task_var.get().strip(),
                     subtask=None,
                     focus_rating=focus_rating,
                     intent_fulfilled=intent_fulfilled,
+                    resumed=getattr(self, "was_resumed", False),
+                    interrupted=getattr(self, "was_interrupted", False),
                     completed=True
                 )
 
@@ -199,12 +223,20 @@ class SessionManager:
             def after_reflection(focus_rating, intent_fulfilled):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
-                log_session("Work", datetime.now(), self.session_counts["Work"], 0,
-                            task=current_task,
-                            subtask=None,
-                            focus_rating=focus_rating,
-                            intent_fulfilled=intent_fulfilled,
-                            completed=True)
+                log_session(
+                    session_type="Work",
+                    start_time=self.session_start_time,
+                    end_time=datetime.now(),
+                    duration_minutes=round((datetime.now() - self.session_start_time).total_seconds(), 2),
+                    task=current_task or self.task_var.get().strip(),
+                    subtask=None,
+                    focus_rating=focus_rating,
+                    intent_fulfilled=intent_fulfilled,
+                    resumed=getattr(self, "was_resumed", False),
+                    interrupted=getattr(self, "was_interrupted", False),
+                    completed=True
+                )
+
                 self.timer_engine.reset()
                 clear_timer_state()
                 self.set_subtask_editable(True)
@@ -215,6 +247,7 @@ class SessionManager:
                 self.timer_engine.update_durations({
                     k: self.duration_vars[k].get() * 60 for k in self.duration_vars
                 })
+
                 if self.timer_label:
                     self.timer_label.config(text=f"{self.duration_vars['Work'].get():02d}:00")
                     self.frames["home"].update_idletasks()
@@ -231,12 +264,20 @@ class SessionManager:
             def after_reflection(focus_rating, intent_fulfilled):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
-                log_session("Work", datetime.now(), self.session_counts["Work"], 0,
-                            task="",
-                            subtask=None,
-                            focus_rating=focus_rating,
-                            intent_fulfilled=intent_fulfilled,
-                            completed=True)
+                log_session(
+                    session_type="Work",
+                    start_time=self.session_start_time,
+                    end_time=datetime.now(),
+                    duration_minutes=round((datetime.now() - self.session_start_time).total_seconds(), 2),
+                    task=self.task_var.get().strip(),
+                    subtask=None,
+                    focus_rating=focus_rating,
+                    intent_fulfilled=intent_fulfilled,
+                    resumed=getattr(self, "was_resumed", False),
+                    interrupted=getattr(self, "was_interrupted", False),
+                    completed=True
+                )
+
                 self._resume_post_task(next_session)
 
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
@@ -251,12 +292,20 @@ class SessionManager:
             def after_reflection(focus_rating, intent_fulfilled):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
-                log_session("Work", datetime.now(), self.session_counts["Work"], 0,
-                            task=self.task_var.get().strip(),
-                            subtask=None,
-                            focus_rating=focus_rating,
-                            intent_fulfilled=intent_fulfilled,
-                            completed=True)
+                log_session(
+                    session_type="Work",
+                    start_time=self.session_start_time,
+                    end_time=datetime.now(),
+                    duration_minutes=round((datetime.now() - self.session_start_time).total_seconds(), 2),
+                    task=self.task_var.get().strip(),
+                    subtask=None,
+                    focus_rating=focus_rating,
+                    intent_fulfilled=intent_fulfilled,
+                    resumed=getattr(self, "was_resumed", False),
+                    interrupted=getattr(self, "was_interrupted", False),
+                    completed=True
+                )
+
                 self._resume_post_task(next_session)
 
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
@@ -271,15 +320,25 @@ class SessionManager:
         spin.pack()
         Button(dialog, text="Add", bg=theme["button_color"], command=add_more).pack(pady=5)
 
-    def _resume_post_task(self, next_session):
+    def _resume_post_task(self, task, next_session):
+        # Set the upcoming session type (e.g., "Work" or "Short Break")
         self.session_type_var.set(next_session)
-        self.session_type_var.set(next_session)
+        # Refresh any on-screen labels (e.g., subtask label)
         self.update_session_info()
+        # Update the session_label text if it exists
         if self.session_label:
-            self.session_label.config(text=f"{next_session} Session {self.session_counts[next_session] + 1}")
+            self.session_label.config(
+                text=f"{next_session} Session {self.session_counts[next_session] + 1}"
+            )
+
+        # Reset the start time for this new session
         self.session_start_time = datetime.now()
         clear_timer_state()
+        # Tell the engine to begin the new session countdown
         self.timer_engine.start(next_session)
+        # While running, subtask controls should be disabled
+        self.set_subtask_editable(False)
+        # Kick off the periodic tick loop so the timer visibly counts down
         self.start_tick_loop()
 
     def start_tick_loop(self):
@@ -308,6 +367,9 @@ class SessionManager:
 
     def on_start(self):
         session_type = self.session_type_var.get()
+        # Lock task editing
+        if hasattr(self, "task_entry_widget"):
+            self.task_entry_widget.configure(state="disabled")
 
         def proceed_start():
             self.session_start_time = datetime.now()
@@ -321,6 +383,8 @@ class SessionManager:
                 k: self.duration_vars[k].get() * 60 for k in self.duration_vars
             })
             self.timer_engine.start(session_type)
+            self.set_subtask_editable(False)
+
             self.update_session_info()
 
             save_timer_state({
@@ -332,6 +396,9 @@ class SessionManager:
                 "task_sessions_remaining": self.task_session_goal.get(),
                 "timestamp": datetime.now().isoformat()
             })
+
+            if hasattr(self, "task_entry_widget"):
+                self.task_entry_widget.configure(state="disabled")
 
         # Inject modal if first Work session
         if session_type == "Work":
@@ -349,6 +416,9 @@ class SessionManager:
             "task_sessions_remaining": self.task_session_goal.get(),
             "timestamp": datetime.now().isoformat()
         })
+        # Toggle task editing
+        if hasattr(self, "task_entry_widget"):
+            self.task_entry_widget.configure(state="normal" if self.is_paused else "disabled")
 
         if self.is_paused:
             self.timer_engine.resume()
@@ -362,6 +432,9 @@ class SessionManager:
     def reset_session(self):
         self.timer_engine.reset()
         self.update_session_info()
+        self.set_subtask_editable(True)
+
+        # Re-enable task editing
         if hasattr(self, "task_entry_widget"):
             self.task_entry_widget.configure(state="normal")
 
@@ -381,9 +454,10 @@ class SessionManager:
 
     def set_subtask_editable(self, editable=True):
         if hasattr(self, "_subtask_controls"):
-            for w in self._subtask_controls.values():
+            for widget in self._subtask_controls.values():
                 try:
-                    w.configure(state="normal" if editable else "disabled")
+                    state = "normal" if editable else "disabled"
+                    widget.configure(state=state)
                 except Exception as e:
                     print(f"[DEBUG] Subtask widget toggle failed: {e}")
 
@@ -397,51 +471,110 @@ class SessionManager:
         summary = f"{state['session_type']} – {mins}:{secs:02} remaining on '{state['task']}'"
         print(f"[DEBUG] Resuming session: {state['session_type']} — {remaining} secs left")
         print(f"[DEBUG] Original start time: {state['timestamp']}")
-        print(f"[DEBUG] was_interrupted={self.was_interrupted}")
 
         if messagebox.askyesno("Resume Session?", f"Resume your last session:\n{summary}?"):
+            # Restore saved values
+            self.task_var.set(state["task"])
             self.task_session_goal.set(state["task_sessions_remaining"])
             self.session_type_var.set(state["session_type"])
             for k in state["session_counts"]:
                 self.session_counts[k] = state["session_counts"][k]
 
-            self.task_var.set(state["task"])
-            self.session_start_time = datetime.fromisoformat(state["timestamp"])  # ✅ real start time
-            self.was_resumed = True  # ✅ resume flag
-            self.was_interrupted = state.get("interrupted", False)  # ✅ interruption flag
+            self.session_start_time = datetime.fromisoformat(state["timestamp"])
+            self.was_resumed = True
+            self.was_interrupted = state.get("interrupted", False)
+
+            # Ensure main task session count ≥ remaining subtask count
+            from pomodoro.subtask_engine import get_remaining_subtasks  # should return int
+            remaining_subtasks = get_remaining_subtasks(state["task"])
+            if self.task_session_goal.get() < remaining_subtasks:
+                self.task_session_goal.set(remaining_subtasks)
+
+            # Disable task editing while resuming
+            if hasattr(self, "task_entry_widget"):
+                self.task_entry_widget.configure(state="disabled")
+
+            self.set_subtask_editable(False)
 
             self.frames["home"].update_idletasks()
             self.timer_engine.start_from(remaining, state["session_type"])
+
+            # Restore the session_label so user sees "Work Session N" etc.
+            if self.session_label:
+                sess = state["session_type"]
+                count = self.session_counts.get(sess, 0) + 1
+                self.session_label.config(text=f"{sess} Session {count}")
+
+            # Update the timer_label to show the remaining time immediately
+            if self.timer_label:
+                self.timer_label.config(text=f"{mins:02d}:{secs:02d}")
+
+            # Start the Tkinter tick loop so the countdown actually ticks
+            self.start_tick_loop()
             return True
+
         else:
-            # ✅ Fix typing bug after declining resume
-            self.task_var.set("")  # fully reset binding
+            self.task_var.set("")
+            if hasattr(self, "task_entry_widget"):
+                self.task_entry_widget.configure(state="normal")
+            self.set_subtask_editable(True)
             self.frames["home"].update_idletasks()
             return False
 
-    def end_session(self):
-        end_time = datetime.now()
+    def on_task_fetched(self, task_name: str):
 
-        if not self.session_start_time:
-            duration = 0
+        from pomodoro.subtask_engine import get_total_subtask_goal
+
+        # 1. Update the current task variable
+        self.task_var.set(task_name)
+
+        # 2. Compute how many subtask‐sessions are still pending
+        total_subtask_goal = get_total_subtask_goal(task_name)
+
+        if total_subtask_goal > 0:
+            # If there are any incomplete subtasks, override to that sum:
+            self.task_session_goal.set(total_subtask_goal)
         else:
-            duration = round((end_time - self.session_start_time).total_seconds() / 60)
+            # Otherwise, no subtasks remain—reset back to 1
+            self.task_session_goal.set(1)
 
-        session_type = self.session_type_var.get()
-        self.session_counts[session_type] += 1  # ✅ increment session number here
+        # 3. Refresh subtask/session labels on screen
+        self.update_session_info()
 
-        log_session(
-            session_type,
-            end_time,
-            self.session_counts[session_type],
-            duration,
-            task=self.task_var.get().strip(),
-            completed=False,
-            resumed=getattr(self, "was_resumed", False),
-            interrupted=getattr(self, "was_interrupted", False),
-        )
+        # 4. Update the session_label (e.g. "Work Session N")
+        if self.session_label:
+            sess = self.session_type_var.get()
+            count = self.session_counts.get(sess, 0) + 1
+            self.session_label.config(text=f"{sess} Session {count}")
 
-        self.reset_session()
+        print(f"[DEBUG] on_task_fetched → Task: '{task_name}', "
+              f"total_subtask_goal={total_subtask_goal}, "
+              f"task_session_goal={self.task_session_goal.get()}")
+
+
+    def end_session(self):
+            end_time = datetime.now()
+
+            if not self.session_start_time:
+                duration = 0
+            else:
+                duration = round((end_time - self.session_start_time).total_seconds() / 60)
+
+            session_type = self.session_type_var.get()
+            self.session_counts[session_type] += 1  # ✅ increment session number here
+
+            log_session(
+                session_type=session_type,
+                start_time=self.session_start_time,
+                end_time=end_time,
+                duration_minutes=duration,
+                task=self.task_var.get().strip(),
+                subtask=None,
+                resumed=getattr(self, "was_resumed", False),
+                interrupted=getattr(self, "was_interrupted", False),
+                completed=False
+            )
+            self.reset_session()
 
     def get_active_task(self) -> str:
         return self.task_var.get().strip()

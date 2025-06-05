@@ -1,14 +1,13 @@
 {
   "active": true,
-  "session_type": "Short Break",
-  "remaining_seconds": 31,
+  "session_type": "Work",
+  "remaining_seconds": 59,
   "session_counts": {
-    "Work": 5,
-    "Short Break": 4,
+    "Work": 0,
+    "Short Break": 0,
     "Long Break": 0
   },
-  "task": "1231323ad",
-  "task_sessions_remaining": 11,
-  "timestamp": "2025-06-05T00:08:28.023684",
-  "interrupted": true
+  "task": "Tria",
+  "task_sessions_remaining": 1,
+  "timestamp": "2025-06-05T17:02:01.549410"
 }

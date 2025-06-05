@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 from pomodoro.theme import theme
 from pomodoro.subtask_engine import (
     get_subtasks,
@@ -7,7 +8,6 @@ from pomodoro.subtask_engine import (
     delete_subtask,
     sync_task_goal_if_needed
 )
-
 
 def render_subtask_panel(parent, manager):
     current_editing = {"name": None}
@@ -17,6 +17,16 @@ def render_subtask_panel(parent, manager):
     expanded = tk.BooleanVar(value=False)
     body = tk.Frame(container, bg=theme["bg_color"])
     body.grid(row=1, column=0, sticky="nsew", padx=5)
+
+    def _auto_pause_if_running():
+        if not manager.is_paused:
+            manager.stop_tick_loop()
+            manager.is_paused = True
+            if hasattr(manager, "pause_button"):
+                manager.pause_button.config(text="Resume")
+            manager.set_subtask_editable(True)
+            if hasattr(manager, "task_entry_widget"):
+                manager.task_entry_widget.configure(state="normal")
 
     def populate():
         for w in body.winfo_children():
@@ -51,6 +61,7 @@ def render_subtask_panel(parent, manager):
                 text="✎",
                 width=3,
                 command=lambda n=sub["name"], g=sub["goal"]: (
+                    _auto_pause_if_running(),
                     name_entry.delete(0, "end"),
                     name_entry.insert(0, n),
                     spin_goal.delete(0, "end"),
@@ -70,17 +81,13 @@ def render_subtask_panel(parent, manager):
         spin_goal = tk.Spinbox(body, from_=1, to=99, width=5, font=theme["entry_font"])
         spin_goal.grid(row=add_row, column=2, padx=5)
 
-        manager._subtask_controls = {
-            "name_entry": name_entry,
-            "spin_goal": spin_goal
-        }
 
         def save_or_add():
             name = name_entry.get().strip()
             try:
                 goal = int(spin_goal.get())
             except ValueError:
-                tk.messagebox.showinfo("Subtask Error", "Goal must be a number.")
+                messagebox.showinfo("Subtask Error", "Goal must be a number.")
                 return
 
             if not name:
@@ -89,7 +96,12 @@ def render_subtask_panel(parent, manager):
             if current_editing["name"]:
                 delete_subtask(task_name, current_editing["name"])
 
-            add_subtask(task_name, name, goal)
+            try:
+                add_subtask(task_name, name, goal)
+            except ValueError as e:
+                messagebox.showinfo("Subtask Error", str(e))
+                return
+
             sync_task_goal_if_needed(manager.task_session_goal, task_name)
 
             name_entry.delete(0, "end")
@@ -101,6 +113,13 @@ def render_subtask_panel(parent, manager):
 
         add_btn = ttk.Button(body, text="+ Add", command=save_or_add)
         add_btn.grid(row=add_row, column=3, pady=5, sticky="e")
+
+        # Save references for external state control
+        manager._subtask_controls = {
+            "name_entry": name_entry,
+            "spin_goal": spin_goal,
+            "add_btn": add_btn
+        }
 
     def _delete_and_refresh(frame: tk.Frame, manager, subtask_name: str) -> None:
         task = manager.get_active_task()

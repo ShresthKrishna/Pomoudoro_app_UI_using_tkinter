@@ -338,3 +338,18 @@ All notable changes to this project will be documented here.
 ### Fixed
 - Session resume inconsistency: previously started new session instead of resuming
 - Edge case where logs were missing interruption/resume data
+
+## [v1.4.3-pre] — 2025-06-05
+
+### Added
+- Auto-resume logic after Break → Work transition
+- New method `on_task_fetched(task_name)` to sync subtask progress and update session goals
+
+### Changed
+- `session_complete_cb()` now uses `_resume_post_task(task, session_type)` for cleaner session chaining
+- Task selection from dropdown now dynamically updates Work session count based on subtasks
+
+### Fixed
+- Timer tick loop not resuming after state recovery
+- Session goal not updating when past task was selected
+- Crash caused by missing arg to `_resume_post_task(...)`

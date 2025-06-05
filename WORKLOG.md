@@ -463,3 +463,23 @@ Daily progress journal for the Pomodoro Productivity App.
 - Begin Task 4: Add focus rating and intent tracking to reflection modal
 - Extend CSV to store reflection data
 - Update UI to support rating/intent fields after session end
+
+## 📅 2025-06-05
+
+**Work Done:**
+- Completed Task 4: Subtask Goal Sync and Session Recovery Enhancements
+- Fixed session resume issue where tick loop wouldn’t restart visually
+- Integrated subtask logic into task selection dropdown: updates session count dynamically
+- Session goal now matches the exact sum of uncompleted subtasks, or defaults to 1
+- App now continues Work sessions after Break without user click
+- Cleaned `_resume_post_task()` signature and refactored call sites
+- Added `on_task_fetched(task)` method to centralize task refresh logic
+
+**Files Modified:**
+- `session_manager.py`: resume logic, auto-start fix, subtask sync function added
+- `home_screen.py`: bound dropdown to `on_task_fetched(...)`
+- `subtask_engine.py`: clarified and used `get_total_subtask_goal(...)`
+- `logger.py`: confirmed resumed sessions log correctly across flows
+
+**Next Steps:**
+- Begin implementation of Task 5: Post-Session Reflection and Heatmap Schema Logging
