@@ -1,11 +1,11 @@
 import tkinter as tk
-from datetime import datetime
+from datetime import datetime,date
 from tkinter import messagebox
 from pomodoro.timer_engine import TimerEngine
 from pomodoro.logger import log_session
 from pomodoro.timer_state_manager import save_timer_state, load_timer_state, clear_timer_state
 from pomodoro.task_memory import get_all_tasks, update_task_memory
-from utils.storage import load_user_settings, save_user_settings
+from utils.storage import load_user_settings, save_user_settings, write_json_file, read_json_file
 from pomodoro.theme import theme
 from pomodoro.subtask_engine import has_any_subtask, mark_subtask_progress, get_active_subtask, reset_subtasks, get_current_subtask_name
 from screens.intent_prompt import show_intent_prompt
@@ -31,6 +31,8 @@ class SessionManager:
         self.last_intent_fulfilled = None
         self.was_resumed = False
         self.was_interrupted = False
+        self.daily_focus_minutes = 0.0
+        self.focus_sessions_today = 0
 
         # Duration settings
         self.duration_vars = {
@@ -44,7 +46,6 @@ class SessionManager:
             if k in saved:
                 self.duration_vars[k].set(saved[k])
 
-        # Load persistent task memory list
         self.all_tasks = get_all_tasks()
 
         # Timer engine setup
@@ -82,14 +83,12 @@ class SessionManager:
         print(f"[DEBUG] session_complete_cb → Previous session: {prev_session}")
         print(f"[DEBUG] session_complete_cb → Duration: {duration} seconds")
 
-        # ✅ Track subtask if Work session and a task is set
         if prev_session == "Work" and task:
             subtask = mark_subtask_progress(task)
             if hasattr(self, "refresh_subtask_panel"):
                 self.refresh_subtask_panel()
             self.update_session_info()
 
-        # ✅ Log the completed session — including Work now
         log_session(
             session_type=prev_session,
             start_time=self.session_start_time,
@@ -102,18 +101,17 @@ class SessionManager:
             completed=True,
             session_number=session_number
         )
-
-        # ✅ Reset flags for next session
         self.was_resumed = False
         self.was_interrupted = False
 
         # Decide next session type
         if prev_session == "Work":
             self.work_sessions_completed += 1
+            self.daily_focus_minutes += duration
+            self.focus_sessions_today += 1
+
             next_session = "Long Break" if self.work_sessions_completed % 4 == 0 else "Short Break"
             print(f"[DEBUG] Work session completed → Next session: {next_session}")
-
-            # Check if task goal reached
             if task and (
                     (has_any_subtask(task) and not get_active_subtask(task)) or
                     self.task_session_goal.get() <= 1
@@ -132,15 +130,32 @@ class SessionManager:
             self._resume_post_task(task, next_session)
 
     def _post_session_routing(self, task, next_session):
-        # Deduct one session from the remaining goal
         self.task_session_goal.set(self.task_session_goal.get() - 1)
 
         if task and self.task_session_goal.get() <= 0:
-            # If no more sessions left for this task, prompt user
             self._pause_for_task_decision(next_session)
         else:
-            # Otherwise, immediately resume into the next session
             self._resume_post_task(task, next_session)
+
+    def log_daily_focus_summary(self):
+        today_str = date.today().isoformat()
+        log_path = "E:/Github Projects/Pomodoro/data/daily_focus_log.json"
+
+        try:
+            existing_data = read_json_file(log_path)
+        except Exception:
+            existing_data = {}
+
+        if today_str not in existing_data:
+            existing_data[today_str] = {
+                "total_focus_minutes": 0,
+                "sessions": 0
+            }
+
+        existing_data[today_str]["total_focus_minutes"] += round(self.daily_focus_minutes, 2)
+        existing_data[today_str]["sessions"] += self.focus_sessions_today
+
+        write_json_file(log_path, existing_data)
 
     def update_session_info(self):
         task = self.task_var.get().strip()
@@ -166,7 +181,6 @@ class SessionManager:
                     text=f"{subtask or 'No Subtask'} : {session_type} Session {session_count}"
                 )
 
-
     def _pause_for_task_decision(self, next_session):
         from tkinter import Toplevel, Label, Button, Spinbox
 
@@ -180,7 +194,7 @@ class SessionManager:
         def on_close_dialog():
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled):
+            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
 
@@ -198,8 +212,7 @@ class SessionManager:
                     completed=True
                 )
 
-                self._resume_post_task(next_session)
-
+                self._resume_post_task(self.task_var.get().strip(), next_session)
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
             show_reflection_prompt(self.root, intent_exists, after_reflection)
 
@@ -220,7 +233,7 @@ class SessionManager:
             self._just_cleared_task = True
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled):
+            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
                 log_session(
@@ -261,7 +274,7 @@ class SessionManager:
             self.task_session_goal.set(1)
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled):
+            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
                 log_session(
@@ -278,8 +291,7 @@ class SessionManager:
                     completed=True
                 )
 
-                self._resume_post_task(next_session)
-
+                self._resume_post_task(self.task_var.get().strip(), next_session)
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
             show_reflection_prompt(self.root, intent_exists, after_reflection)
 
@@ -289,7 +301,7 @@ class SessionManager:
                 self.task_session_goal.set(spin_val)
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled):
+            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
                 log_session(
@@ -306,8 +318,7 @@ class SessionManager:
                     completed=True
                 )
 
-                self._resume_post_task(next_session)
-
+                self._resume_post_task(self.task_var.get().strip(), next_session)
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
             show_reflection_prompt(self.root, intent_exists, after_reflection)
 
@@ -400,7 +411,6 @@ class SessionManager:
             if hasattr(self, "task_entry_widget"):
                 self.task_entry_widget.configure(state="disabled")
 
-        # Inject modal if first Work session
         if session_type == "Work":
             show_intent_prompt(self.root, proceed_start)
         else:
@@ -484,13 +494,11 @@ class SessionManager:
             self.was_resumed = True
             self.was_interrupted = state.get("interrupted", False)
 
-            # Ensure main task session count ≥ remaining subtask count
             from pomodoro.subtask_engine import get_remaining_subtasks  # should return int
             remaining_subtasks = get_remaining_subtasks(state["task"])
             if self.task_session_goal.get() < remaining_subtasks:
                 self.task_session_goal.set(remaining_subtasks)
 
-            # Disable task editing while resuming
             if hasattr(self, "task_entry_widget"):
                 self.task_entry_widget.configure(state="disabled")
 

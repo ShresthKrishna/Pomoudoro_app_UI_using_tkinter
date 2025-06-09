@@ -75,9 +75,14 @@ def run_app():
                 if session_manager.session_start_time else datetime.now().isoformat(),
                 "interrupted": True
             })
+
+        # ✅ Track daily focus time before quitting
+        session_manager.log_daily_focus_summary()
+
         root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", on_close)
+
 
     root.mainloop()
 

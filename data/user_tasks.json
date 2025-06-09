@@ -580,22 +580,22 @@
       {
         "name": "1123",
         "goal": 3,
-        "completed": 1
+        "completed": 3
       },
       {
         "name": "312",
         "goal": 1,
-        "completed": 0
+        "completed": 1
       },
       {
         "name": "31231",
         "goal": 1,
-        "completed": 0
+        "completed": 1
       },
       {
         "name": "312111",
         "goal": 3,
-        "completed": 0
+        "completed": 3
       }
     ]
   },
@@ -615,7 +615,7 @@
       {
         "name": "31231",
         "goal": 3,
-        "completed": 1
+        "completed": 3
       },
       {
         "name": "1312",
@@ -630,7 +630,7 @@
       {
         "name": "132",
         "goal": 1,
-        "completed": 1
+        "completed": 0
       },
       {
         "name": "3123",
