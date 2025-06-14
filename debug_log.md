@@ -324,3 +324,26 @@
 - Task selection updates session count in real time  
 - Timer transitions correctly across Work–Break cycles  
 - Session resumes include visual + logical state recovery  
+
+## 🐞 [June 15, 2025] – Task Session Sync & Resume Integration
+
+**Issue**: Session timer did not continue from Break to Work automatically  
+- Fix: Added `_resume_post_task(task, "Work")` inside `session_complete_cb()`  
+- Result: Sessions transition automatically through the cycle when goals allow
+
+**Issue**: App resume did not restore tick loop or visual countdown  
+- Fix: Ensured `start_tick_loop()` is triggered after loading timer state  
+- Result: Timer and labels visually reflect resumed session
+
+**Issue**: Session count inflated when browsing past tasks  
+- Fix: Introduced `on_task_fetched()` to recompute session goal from subtasks  
+- Result: Session goal resets to match uncompleted subtasks (or 1 if none exist)
+
+**Issue**: `_resume_post_task()` signature mismatch  
+- Fix: Updated all call sites to use `task, next_session` format  
+- Result: Avoids argument error during session flow transitions
+
+**Validation**:  
+- Resume retains correct `start_time`  
+- CSV logs `resumed=True`, `interrupted=True` as expected  
+- Task dropdown refresh updates session goal immediately  

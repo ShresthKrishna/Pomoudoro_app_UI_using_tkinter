@@ -353,3 +353,19 @@ All notable changes to this project will be documented here.
 - Timer tick loop not resuming after state recovery
 - Session goal not updating when past task was selected
 - Crash caused by missing arg to `_resume_post_task(...)`
+
+## [v1.4.3] – June 15, 2025
+
+### Added
+- Session continuation system with state restore (`resumed`, `interrupted`)
+- Resume logic now uses original `start_time` for accurate logging
+- CSV logging extended to track resumed and interrupted flags
+
+### Changed
+- `_resume_post_task()` now requires explicit `task` and `next_session`
+- Timer tick loop reinitializes cleanly after state recovery
+
+### Fixed
+- Session goal inflation when scrolling through task history
+- Task session count now syncs to subtask progress via `on_task_fetched()`
+- Prevented type errors during session routing

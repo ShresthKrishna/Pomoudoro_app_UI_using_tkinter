@@ -483,3 +483,23 @@ Daily progress journal for the Pomodoro Productivity App.
 
 **Next Steps:**
 - Begin implementation of Task 5: Post-Session Reflection and Heatmap Schema Logging
+
+## 📅 2025-06-05 to 2025-06-15
+
+### Milestone v1.4.3 — Subtask Sync & Resume Logic Finalization
+
+**Work Done:**
+- Finished all logic for tracking interrupted sessions and restoring accurate start times.
+- Hooked window close (`WM_DELETE_WINDOW`) to save `interrupted = True` in timer state.
+- On app reopen, resumed sessions start from saved `start_time` and log `resumed = True`.
+- Timer resumes tick loop correctly on recovery.
+- SessionManager now reflects updated subtask goals on task selection via `on_task_fetched()`.
+
+**Technical Enhancements:**
+- Added `was_resumed` and `was_interrupted` flags to session flow.
+- Corrected `_resume_post_task()` call structure across session transitions.
+- Integrated logic to dynamically set `task_session_goal` from remaining subtasks.
+
+**UI Changes:**
+- Task dropdown now syncs with session count.
+- Auto-transitions from Break to Work session implemented (no extra user input required).
