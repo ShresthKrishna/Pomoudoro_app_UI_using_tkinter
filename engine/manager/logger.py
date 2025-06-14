@@ -1,4 +1,4 @@
-# engine/session_manager/logger.py
+# engine/manager/logger.py
 
 from datetime import date, datetime
 from pomodoro.logger import log_session as base_log_session

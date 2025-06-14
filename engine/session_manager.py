@@ -570,4 +570,3 @@ class SessionManager:
 
     def get_active_task(self) -> str:
         return self.task_var.get().strip()
-    
