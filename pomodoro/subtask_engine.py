@@ -14,6 +14,19 @@ def _load_all() -> List[Dict]:
     with USER_TASK_FILE.open("r", encoding="utf-8") as f:
         return json.load(f)
 
+def get_remaining_subtasks(task_name: str) -> int:
+    """
+    Returns the number of individual *sessions* still needed across all incomplete subtasks.
+    For example, if one subtask has goal=3 and completed=1, it contributes 2 remaining.
+    """
+    for entry in _load_all():
+        if entry["task"] == task_name:
+            return sum(
+                sub["goal"] - sub["completed"]
+                for sub in entry.get("subtasks", [])
+                if sub["completed"] < sub["goal"]
+            )
+    return 0
 
 def _save_all(all_tasks: List[Dict]):
     with USER_TASK_FILE.open("w", encoding="utf-8") as f:
