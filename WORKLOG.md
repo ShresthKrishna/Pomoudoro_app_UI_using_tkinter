@@ -503,3 +503,24 @@ Daily progress journal for the Pomodoro Productivity App.
 **UI Changes:**
 - Task dropdown now syncs with session count.
 - Auto-transitions from Break to Work session implemented (no extra user input required).
+
+## 📅 2025-06-16
+
+**Work Done:**
+- Created new file: `engine/session_manager/router.py` with `resume_post_task()` and `pause_for_task_decision()` functions
+- Rewired post-session routing from `SessionManager` into `router.py`, isolating UI logic
+- Rebuilt session end decision flow to be modal-safe, modular, and extensible
+- Integrated router calls inside `manager.py` for session completion handling
+- Updated `SessionManager` to remove modal calls and delegate routing decisions
+- Refactored pause/resume tick loop logic into clean start/stop functions
+- All session labels, state transitions, and subtask controls now centralized and modular
+
+**Files Modified:**
+- `engine/session_manager/router.py`: New
+- `engine/session_manager/manager.py`: Routing integration, modal logic removed
+- `home_screen.py`: (prepared for downstream UI updates from new router flow)
+
+**Next Steps:**
+- Move `session_complete_cb()` fully into `router.py`
+- Begin modularization of `resume_if_possible()` and hook it to `state.py` and `router.py`
+- Prepare `reflection.py` for integration of intent/reflection prompts as standalone modules

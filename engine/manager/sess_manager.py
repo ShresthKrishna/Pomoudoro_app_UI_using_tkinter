@@ -3,6 +3,8 @@ from datetime import datetime
 from pomodoro.timer_engine import TimerEngine
 from engine.manager import logger, state, subtasks, router, reflection
 from engine.manager.subtasks import set_subtask_controls_enabled
+
+
 class SessionManager:
     def __init__(self, root):
         self.root = root
@@ -29,7 +31,7 @@ class SessionManager:
 
         self.duration_vars = {
             "Work": tk.IntVar(value=25),
-            "Short Break": tk.IntVar(value = 5),
+            "Short Break": tk.IntVar(value=5),
             "Long Break": tk.IntVar(value=15)
         }
         self._load_durations()
@@ -42,7 +44,8 @@ class SessionManager:
 
     # ---------------------------------------------------
     #                       UI Wiring
-    #----------------------------------------------------
+    # ----------------------------------------------------
+
     def register_screens(self, frame_dict):
         pass
 
@@ -53,7 +56,7 @@ class SessionManager:
         from utils.storage import load_user_settings
 
         saved = load_user_settings()
-        for types  in self.duration_vars:
+        for types in self.duration_vars:
             if types in saved:
                 self.duration_vars[types].set(saved[types])
 
@@ -91,7 +94,6 @@ class SessionManager:
         self.set_subtask_editable(True)
         self.was_resumed = False
         self.was_interrupted = False
-
 
     # ---------------------------------------------------
     #                       Timer Loop Control
@@ -152,13 +154,20 @@ class SessionManager:
         pass
 
     def _resume_post_task(self, task, next_session):
-        pass
+        """
+            Args:
+                manager: The SessionManager instance.
+                task: The current or new task name.
+                next_session: The type of session to start next ("Work", "Short Break", etc.)
+            """
+        router.resume_post_task(self, task, next_session)
+
     # ---------------------------------------------------
     #                       Dialogs
     # ----------------------------------------------------
 
     def _pause_for_task_decision(self, next_session):
-        pass
+        router._pause_for_task_detection(self, next_session)
 
     # ---------------------------------------------------
     #                       Resume + State Restore
@@ -166,7 +175,6 @@ class SessionManager:
 
     def resume_if_possible(self):
         pass
-
 
     # ---------------------------------------------------
     #                       UI Label
@@ -179,7 +187,7 @@ class SessionManager:
     def update_session_info(self):
         task = self.task_var.get().strip()
         session_type = self.session_type_var.get()
-        session_count = self.session_counts.get(session_type,0) + 1
+        session_count = self.session_counts.get(session_type, 0) + 1
 
         subtask = None
         if task:
@@ -193,7 +201,6 @@ class SessionManager:
         if hasattr(self, "subtask_label"):
             label = f"{subtask or 'No Subtask'} : {session_type} Session {session_count}"
             self.subtask_label.config(text=label)
-
 
     def set_subtask_editable(self, editable=True):
         if hasattr(self, "_subtask_controls"):
@@ -214,9 +221,7 @@ class SessionManager:
 
         if self.session_label:
             self.session_label.config(text=data["session_label"])
-        print(f"[DEBUG] on_task_fetched → Task: '{task_name}', "
-                  f"subtask={data['subtask']}, "
-                  f"goal={data['goal']}")
+        print(f"[DEBUG] on_task_fetched → Task: '{task_name}', "f"subtask={data['subtask']}, "f"goal={data['goal']}")
 
     def get_active_task(self) -> str:
         return self.task_var.get().strip()
@@ -228,7 +233,7 @@ class SessionManager:
         from utils.storage import save_user_settings
         durations = {k: self.duration_vars[k].get() for k in self.duration_vars}
         save_user_settings(durations)
-        self.timer_engine.update_durations({k: v*60 for k,v in durations.items()})
+        self.timer_engine.update_durations({k: v*60 for k, v in durations.items()})
 
     def log_daily_focus_summary(self):
         logger.log_daily_focus_summary(

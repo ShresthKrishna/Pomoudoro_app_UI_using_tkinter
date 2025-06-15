@@ -369,3 +369,19 @@ All notable changes to this project will be documented here.
 - Session goal inflation when scrolling through task history
 - Task session count now syncs to subtask progress via `on_task_fetched()`
 - Prevented type errors during session routing
+
+## [2025-06-16] - v1.4.3 (UI-Agnostic Routing & SessionManager Refactor)
+
+### Added
+- `router.py`: Modular session routing functions `pause_for_task_decision()` and `resume_post_task()` now decoupled from `SessionManager`
+- Routing logic now handles post-session decision-making cleanly across task transitions
+- `manager.py`: Integrated routing callbacks and removed embedded UI/modal logic
+
+### Changed
+- SessionManager no longer presents dialogs or hardcodes transitions; all routed externally
+- Session lifecycle flow now UI-safe and portable across frameworks (PySide6, Kivy)
+- Task goal checks now direct routing into router-layer instead of internal logic calls
+
+### Architecture
+- Full milestone shift toward UI-agnostic design
+- `engine/session_manager/` now contains five cleanly separated modules for backend session logic
