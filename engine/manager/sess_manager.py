@@ -66,7 +66,7 @@ class SessionManager:
 
     def on_start(self):
         """Start a session (invokes intent prompt if Work)."""
-        pass
+        reflection.maybe_trigger_intent(self)
 
     def end_session(self):
         """Log and reset a session that was interrupted mid-way."""
@@ -148,7 +148,7 @@ class SessionManager:
     #                       Session Flow
     # ----------------------------------------------------
     def session_complete_cb(self, prev_session, count):
-        pass
+        router.session_complete_cb(self, prev_session, count)
 
     def _post_session_routing(self, task, next_session):
         pass
@@ -169,12 +169,12 @@ class SessionManager:
     def _pause_for_task_decision(self, next_session):
         router._pause_for_task_detection(self, next_session)
 
-    # ---------------------------------------------------
+    # -------------------------------------------`--------
     #                       Resume + State Restore
     # ----------------------------------------------------
 
     def resume_if_possible(self):
-        pass
+        router.resume_if_possible(self)
 
     # ---------------------------------------------------
     #                       UI Label

@@ -347,3 +347,23 @@
 - Resume retains correct `start_time`  
 - CSV logs `resumed=True`, `interrupted=True` as expected  
 - Task dropdown refresh updates session goal immediately  
+
+## 🐞 [June 17, 2025] – Full Modularization of Session Flow
+
+**Issue**: SessionManager was overloaded with mixed concerns  
+- Fix: Refactored lifecycle routing (`pause`, `resume`, `complete`) into `router.py`  
+- Result: SessionManager now handles only UI state and delegates all logic
+
+**Issue**: Modal prompts tied to Tkinter directly  
+- Fix: Moved intent prompt into `reflection.py` with conditional logic  
+- Result: Prompts show only before first Work session, maintaining minimal friction
+
+**Issue**: Repeating logic across pause and resume points  
+- Fix: Centralized `resume_post_task()` and `pause_for_task_decision()` logic  
+- Result: Simplified code reuse and routing clarity
+
+**Validation**:
+- Intent prompt shows once per app launch before first Work session
+- Subtask controls locked/unlocked on session start via reflection module
+- Labels update dynamically and route state cleanly
+- All lifecycle transitions tested with UI stubs and internal prints

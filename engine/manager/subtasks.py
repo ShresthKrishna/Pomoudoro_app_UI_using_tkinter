@@ -1,5 +1,6 @@
 from pomodoro.subtask_engine import get_total_subtask_goal, get_current_subtask_name
 
+
 def fetch_subtask_data(task_name: str, session_type: str, session_counts: dict) -> dict:
     goal = get_total_subtask_goal(task_name)
     session_count = session_counts.get(session_type, 0) + 1
@@ -10,3 +11,15 @@ def fetch_subtask_data(task_name: str, session_type: str, session_counts: dict) 
         "subtask": subtask_name,
         "session_label": f"{session_type} Session {session_count}"
     }
+
+
+def set_subtask_controls_enabled(controls_dict, editable=True):
+    """
+    Enable or disable the subtask editing UI components.
+    """
+    state = "normal" if editable else "disabled"
+    for widget in controls_dict.values():
+        try:
+            widget.configure(state=state)
+        except Exception as e:
+            print(f"[DEBUG] Could not update widget state: {e}")
