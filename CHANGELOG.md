@@ -385,3 +385,20 @@ All notable changes to this project will be documented here.
 ### Architecture
 - Full milestone shift toward UI-agnostic design
 - `engine/session_manager/` now contains five cleanly separated modules for backend session logic
+
+## [2025-06-17] - v1.4.3 (Final PM Batch – Reflection Module & Routing Complete)
+
+### Added
+- `reflection.py`: New module to manage pre-session intent prompts and session start logic
+- `maybe_trigger_intent()` determines if a reflection is needed before a Work session
+- `_begin_session()` launches timer and locks subtasks after prompt
+
+### Changed
+- `SessionManager` no longer includes routing, dialog, or session transition logic
+- All lifecycle flows now routed via `router.py` or `reflection.py`
+- `session_complete_cb()` moved out of SessionManager to improve modularity
+- UI elements are now passive receivers of backend engine logic
+
+### Architecture
+- All lifecycle phases (launch, start, tick, complete, post-task) are now UI-agnostic
+- `engine/session_manager/` now contains six pure-logic modules, ready for future frontend transitions
