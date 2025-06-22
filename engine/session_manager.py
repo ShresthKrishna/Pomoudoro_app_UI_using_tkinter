@@ -194,7 +194,7 @@ class SessionManager:
         def on_close_dialog():
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
+            def after_reflection(focus_rating, intent_fulfilled):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
 
@@ -203,7 +203,7 @@ class SessionManager:
                     start_time=self.session_start_time,
                     end_time=datetime.now(),
                     duration_minutes=round((datetime.now() - self.session_start_time).total_seconds(), 2),
-                    task=  self.task_var.get().strip(),
+                    task=self.task_var.get().strip(),
                     subtask=None,
                     focus_rating=focus_rating,
                     intent_fulfilled=intent_fulfilled,
@@ -213,6 +213,7 @@ class SessionManager:
                 )
 
                 self._resume_post_task(self.task_var.get().strip(), next_session)
+
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
             show_reflection_prompt(self.root, intent_exists, after_reflection)
 
@@ -233,7 +234,7 @@ class SessionManager:
             self._just_cleared_task = True
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
+            def after_reflection(focus_rating, intent_fulfilled):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
                 log_session(
@@ -274,7 +275,7 @@ class SessionManager:
             self.task_session_goal.set(1)
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
+            def after_reflection(focus_rating, intent_fulfilled):
                 self.last_focus_rating = focus_rating
                 self.last_intent_fulfilled = intent_fulfilled
                 log_session(
@@ -292,6 +293,7 @@ class SessionManager:
                 )
 
                 self._resume_post_task(self.task_var.get().strip(), next_session)
+
             intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
             show_reflection_prompt(self.root, intent_exists, after_reflection)
 
@@ -301,26 +303,8 @@ class SessionManager:
                 self.task_session_goal.set(spin_val)
             dialog.destroy()
 
-            def after_reflection(focus_rating, intent_fulfilled, next_session=next_session):
-                self.last_focus_rating = focus_rating
-                self.last_intent_fulfilled = intent_fulfilled
-                log_session(
-                    session_type="Work",
-                    start_time=self.session_start_time,
-                    end_time=datetime.now(),
-                    duration_minutes=round((datetime.now() - self.session_start_time).total_seconds(), 2),
-                    task=self.task_var.get().strip(),
-                    subtask=None,
-                    focus_rating=focus_rating,
-                    intent_fulfilled=intent_fulfilled,
-                    resumed=getattr(self, "was_resumed", False),
-                    interrupted=getattr(self, "was_interrupted", False),
-                    completed=True
-                )
-
-                self._resume_post_task(self.task_var.get().strip(), next_session)
-            intent_exists = hasattr(self, "last_user_intent") and bool(self.last_user_intent.strip())
-            show_reflection_prompt(self.root, intent_exists, after_reflection)
+            # 🚫 Skip reflection prompt when adding sessions to same task
+            self._resume_post_task(self.task_var.get().strip(), next_session)
 
         Button(dialog, text="Start New Task", bg=theme["button_color"],
                command=new_task).pack(fill="x", padx=20, pady=5)

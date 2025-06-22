@@ -402,3 +402,48 @@ All notable changes to this project will be documented here.
 ### Architecture
 - All lifecycle phases (launch, start, tick, complete, post-task) are now UI-agnostic
 - `engine/session_manager/` now contains six pure-logic modules, ready for future frontend transitions
+<<<<<<< HEAD
+=======
+
+## [v1.4.3] – 2025-06-18
+
+### Added
+- `reflection.py` module for session intent and post-session reflection prompts
+- `maybe_trigger_intent()` called before first Work session
+- `show_reflection_prompt()` collects user rating and notes after Work session ends
+- Reflection fields: `focus_rating`, `session_notes`, and `intent_fulfilled = (rating ≥ 4)`
+- Reflection data logged via `logger.log_session_data()`
+
+### Changed
+- `SessionManager.on_start()` now delegates to `reflection.py`
+- `session_complete_cb()` fully moved into `router.py`
+- Subtask locking logic centralized via `set_subtask_controls_enabled()` on session start
+- UI state separation achieved for full session lifecycle
+
+### Fixed
+- Cleared stale reflection flags on session reset
+- Prevented duplicate modal triggers from session reentry
+- Logger format updated to conditionally append reflection fields
+
+## 2025-06-22
+**Work Done:**
+- Split monolithic `SessionManager` into seven focused mixins:
+  - `session_base`, `session_settings`, `session_timer`, `session_tasks`, `session_router`, `session_subtasks`, `session_dialogs`
+- Reintroduced missing UI hooks in mixins:
+  - `update_display_cb` in `session_timer`
+  - `get_all_task_names` in `session_tasks`
+- Added `SessionSubtasks` mixin to implement `set_subtask_editable`
+- Updated `sess_manager.py` to inherit all mixins; adjusted `app.py` import to `engine.manager.sess_manager`
+- Tweaked `on_task_fetched` logic to preserve manual `task_session_goal` values
+
+**Decisions:**
+- Adopt mixin-based architecture for clear separation of concerns
+- Centralize all UI-related callbacks in `session_base` / `session_timer`
+- Retain core routing logic in `session_router` to facilitate future extensions
+
+**Next Steps:**
+- Write unit tests for each mixin
+- Remove deprecated `session_manager.py` once new modules are stable
+- Update README to document new file structure
+- Perform end-to-end QA on all dialog flows
+>>>>>>> origin/feature/ui-agnostic/v1.4.3-session-sync
