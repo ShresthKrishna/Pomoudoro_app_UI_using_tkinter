@@ -85,7 +85,7 @@ def render_home_screen(frame, manager):
     task_combo = ttk.Combobox(
         task_frame,
         textvariable=manager.task_var,
-        values=manager.all_tasks,
+        values=manager.get_all_task_names(),
         font=theme["label_font"],
         state="normal"
     )

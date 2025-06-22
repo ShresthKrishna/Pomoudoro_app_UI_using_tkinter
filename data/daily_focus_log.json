@@ -6,5 +6,21 @@
   "2025-06-13": {
     "total_focus_minutes": 232.78,
     "sessions": 42
+  },
+  "2025-06-19": {
+    "total_focus_minutes": 14.0,
+    "sessions": 14
+  },
+  "2025-06-20": {
+    "total_focus_minutes": 72754.65,
+    "sessions": 11
+  },
+  "2025-06-21": {
+    "total_focus_minutes": 144.28,
+    "sessions": 27
+  },
+  "2025-06-22": {
+    "total_focus_minutes": 2.31,
+    "sessions": 4
   }
 }

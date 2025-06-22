@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TIMER_STATE_PATH = Path("data/timer_state.json")
+TIMER_STATE_PATH = PROJECT_ROOT / "data" / "timer_state.json"
 
 def save_timer_state(state_dict):
     TIMER_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)

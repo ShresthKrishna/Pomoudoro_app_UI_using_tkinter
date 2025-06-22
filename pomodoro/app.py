@@ -3,7 +3,7 @@ from pomodoro.theme import theme
 from pomodoro.timer_state_manager import save_timer_state
 from screens.navigation import create_navigation, create_bottom_controls
 from screens.layout import create_all_screens
-from engine.session_manager import SessionManager
+from engine.manager.sess_manager import SessionManager
 from datetime import datetime
 
 

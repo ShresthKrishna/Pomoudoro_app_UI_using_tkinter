@@ -367,3 +367,36 @@
 - Subtask controls locked/unlocked on session start via reflection module
 - Labels update dynamically and route state cleanly
 - All lifecycle transitions tested with UI stubs and internal prints
+
+## 🐞 [June 18, 2025] – Intent + Reflection Prompt Integration
+
+**Issue**: Intent prompt logic was hardwired into UI  
+- Fix: Extracted into `reflection.maybe_trigger_intent()` with one-time condition  
+- Result: Clean separation of pre-session logic with conditional invocation
+
+**Issue**: No post-session feedback system  
+- Fix: Added `show_reflection_prompt()` after Work sessions only  
+- Captures user’s perceived focus and any notes for analytics
+
+**Issue**: UI bloated with business logic  
+- Fix: Moved `session_complete_cb()` to `router.py`; `on_start()` to `reflection.py`  
+- Result: All routing and prompting now UI-agnostic
+
+**Validation**:
+- Reflection prompt shows after Work sessions only
+- Focus rating, session notes, and success value saved to `session.csv`
+- Subtask lock verified at session start
+- Verified flags `_last_focus_rating`, `_last_session_success` reset correctly on new task
+- Logger correctly includes optional fields when reflection is active
+
+### 🐞 [June 22, 2025] – Missing update_display_cb in modular mixin
+- **Issue**: App crashed on startup with `AttributeError: 'SessionManager' object has no attribute 'update_display_cb'` when initializing `TimerEngine`.  
+- **Fix**: Added original `update_display_cb(mins, secs)` method into `session_timer.py` mixin to replicate legacy behavior.
+
+### 🐞 [June 22, 2025] – Missing get_all_task_names in session_tasks mixin
+- **Issue**: Home screen dropdown failed with `AttributeError: 'SessionManager' object has no attribute 'get_all_task_names'`.  
+- **Fix**: Implemented `get_all_task_names()` in `session_tasks.py`, returning `get_all_tasks()` as in legacy code.
+
+### 🐞 [June 22, 2025] – Absent set_subtask_editable integration
+- **Issue**: Calls to `self.set_subtask_editable()` were no-ops; mixins lacked that method.  
+- **Fix**: Created `SessionSubtasks` mixin (`session_subtasks.py`) with `set_subtask_editable(editable: bool)` invoking `set_subtask_controls_enabled`.
