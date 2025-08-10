@@ -63,16 +63,19 @@ class SessionTimer:
             "task_sessions_remaining": self.task_session_goal.get(),
             "timestamp": datetime.now().isoformat()
         })
-        # Toggle task editing
+
         if hasattr(self, "task_entry_widget"):
             self.task_entry_widget.configure(state="normal" if self.is_paused else "disabled")
 
         if self.is_paused:
             self.timer_engine.resume()
             pause_button.config(text="Pause")
+            self.clear_paused_state()  # ✅ fixed
         else:
             self.timer_engine.pause()
             pause_button.config(text="Resume")
+            self.show_paused_state("Press Start to resume")  # ✅ fixed
+
         self.is_paused = not self.is_paused
         self.set_subtask_editable(self.is_paused)
 
@@ -101,14 +104,13 @@ class SessionTimer:
 
     def end_session(self):
             end_time = datetime.now()
-
             if not self.session_start_time:
                 duration = 0
             else:
                 duration = round((end_time - self.session_start_time).total_seconds() / 60)
 
             session_type = self.session_type_var.get()
-            self.session_counts[session_type] += 1  # ✅ increment session number here
+            self.session_counts[session_type] += 1
 
             log_session(
                 session_type=session_type,

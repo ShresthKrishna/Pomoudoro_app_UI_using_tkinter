@@ -543,8 +543,6 @@ Daily progress journal for the Pomodoro Productivity App.
 - Add post-session reflection modal in `reflection.py`
 - Extend `session.csv` schema to include focus ratings and session success markers
 - Connect analytics dashboard to logger-enhanced metrics
-<<<<<<< HEAD
-=======
 
 ## 📅 2025-06-18 – Final SessionManager Modularization
 
@@ -590,4 +588,25 @@ Daily progress journal for the Pomodoro Productivity App.
 - Add automated tests for each mixin
 - Document new module responsibilities in project README
 - Validate full app behavior across all screens
->>>>>>> origin/feature/ui-agnostic/v1.4.3-session-sync
+
+## 📅 2025-08-10 — v1.5 Kickoff (Planning & Branch Hygiene)
+
+**Work Done**
+- Created working branch `ui-agnostic-v1.5` from `main`.
+- Tagged rollback point on `main` as `pre-v1.5-2025-08-10`.
+- Created snapshot branch `ui-agnostic-main-snapshot-2025-08-10` from `main`.
+- Updated **CHANGELOG.md**, **WORKLOG.md**, **debug_log.md** to open v1.5 scope.
+- Scoped v1.5 priorities:
+  - Analytics expansion: add `focus_rating`, `intent_text`, `reflection_notes` to `session.csv` (non-breaking).
+  - Heatmap readiness: confirm reliable `start_time` & `end_time` logging for behavior mapping.
+  - Hooks for gamification (session-count unlocks) and theming groundwork.
+
+**Decisions**
+- Enforce UI‑agnostic rule: all logic changes live in `engine/` and analytics modules; no Tkinter dependencies.
+- Re‑affirm Logs‑First rule: no merges without updated CHANGELOG / WORKLOG / debug_log.
+
+**Next Steps**
+- Extend `logger.py` to write optional fields (`focus_rating`, `intent_text`, `reflection_notes`) and reconfirm `start_time`/`end_time` consistency.
+- Update analytics (e.g., `analytics.py`, charts) to surface new fields: rating distributions, intent adherence, notes tagging.
+- Add backward‑compatible CSV readers and tests; analytics must tolerate missing columns.
+- Prepare PR from `ui-agnostic-v1.5` → `main` once docs land.

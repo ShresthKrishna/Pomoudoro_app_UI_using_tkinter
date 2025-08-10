@@ -13,6 +13,9 @@ from pomodoro.timer_state_manager import save_timer_state, load_timer_state, cle
 from screens.reflection_prompt import show_reflection_prompt
 
 class SessionRouter:
+    def __init__(self):
+        self.task_var = None
+
     def session_complete_cb(self, prev_session, count):
         completed_at = datetime.now()
         duration = round((completed_at - self.session_start_time).total_seconds(), 2)
@@ -82,25 +85,24 @@ class SessionRouter:
             self._resume_post_task(task, next_session)
 
     def _resume_post_task(self, task, next_session):
-        # Set the upcoming session type (e.g., "Work" or "Short Break")
         self.session_type_var.set(next_session)
-        # Refresh any on-screen labels (e.g., subtask label)
         self.update_session_info()
-        # Update the session_label text if it exists
         if self.session_label:
             self.session_label.config(
                 text=f"{next_session} Session {self.session_counts[next_session] + 1}"
             )
 
-        # Reset the start time for this new session
         self.session_start_time = datetime.now()
         clear_timer_state()
-        # Tell the engine to begin the new session countdown
-        self.timer_engine.start(next_session)
-        # While running, subtask controls should be disabled
-        self.set_subtask_editable(False)
-        # Kick off the periodic tick loop so the timer visibly counts down
-        self.start_tick_loop()
+        if self.auto_session_switch:
+            self.timer_engine.start(next_session)
+            self.set_subtask_editable(False)
+            self.start_tick_loop()
+        else:
+            self.timer_engine.reset()
+            self.set_subtask_editable(True)
+            if hasattr(self, "on_manual_session_required"):
+                self.on_manual_session_required()
 
     def resume_if_possible(self):
         state = load_timer_state()
