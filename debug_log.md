@@ -400,3 +400,23 @@
 ### 🐞 [June 22, 2025] – Absent set_subtask_editable integration
 - **Issue**: Calls to `self.set_subtask_editable()` were no-ops; mixins lacked that method.  
 - **Fix**: Created `SessionSubtasks` mixin (`session_subtasks.py`) with `set_subtask_editable(editable: bool)` invoking `set_subtask_controls_enabled`.
+
+## 🐞 [2025-08-10] – v1.5 Launch: Risk Controls & Preconditions
+
+**Context**
+- Starting v1.5 focused on analytics expansion + heatmap reliability. No functional deltas shipped today.
+
+**Risks & Mitigations**
+- **CSV schema drift → analytics failures**
+  - *Mitigation:* Add new fields as optional columns; analytics must handle absence (fallback to zeros / “N/A”).
+- **Rollback complexity if early v1.5 commits regress flow**
+  - *Mitigation:* Hard tag on `main` (`pre-v1.5-2025-08-10`) + snapshot branch ensure fast, clean rollback.
+- **UI coupling during reflection capture**
+  - *Mitigation:* Keep intent/reflection logic in `engine/` modules; UI remains passive client.
+
+**Validation Checklist (pre-change)**
+- `session.csv` already logs `start_time`/`end_time` reliably; resume/interruption flags validated previously.
+- Charts tolerant to missing series/columns; confirm graceful handling with optional fields.
+
+**Action Outcome (today)**
+- Branches and tags created; docs updated; no code paths altered.

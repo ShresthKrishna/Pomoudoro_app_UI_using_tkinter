@@ -444,3 +444,16 @@ All notable changes to this project will be documented here.
 - Remove deprecated `session_manager.py` once new modules are stable
 - Update README to document new file structure
 - Perform end-to-end QA on all dialog flows
+
+## [v1.5.0-start] – 2025-08-10
+
+### Added
+- **Governance & Safety:** Began v1.5 work on branch `ui-agnostic-v1.5`; created snapshot `ui-agnostic-main-snapshot-2025-08-10`.
+- **Rollback:** Tag `pre-v1.5-2025-08-10` on `main` for guaranteed return point.
+- **Analytics Scope:** Plan to add `focus_rating`, `intent_text`, `reflection_notes` to `session.csv` and wire into dashboards (heatmap requires consistent `start_time`/`end_time`).
+
+### Changed
+- **Process:** Re‑enforced Logs‑First merges and “ui‑agnostic” branch naming convention.
+
+### Notes
+- No runtime behavior changes today; documentation, planning, and branch safety only.
