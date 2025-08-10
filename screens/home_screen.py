@@ -4,14 +4,15 @@ from pomodoro.theme import theme
 from screens.subtask_ui import render_subtask_panel
 
 def render_home_screen(frame, manager):
-    # --- Configure grid with explicit heights ---
     frame.rowconfigure(0, weight=0, minsize=30)  # Session Type label
     frame.rowconfigure(1, weight=0, minsize=40)  # Dropdown
     frame.rowconfigure(2, weight=1, minsize=100)  # Timer (expands)
     frame.rowconfigure(3, weight=0, minsize=30)  # Session label
     frame.rowconfigure(4, weight=0, minsize=100)  # Task Plan
-    frame.rowconfigure(5, weight=0, minsize=100)  # Subtask panel ← ADD this row
-    frame.rowconfigure(6, weight=0, minsize=20)  # Bottom spacer
+    frame.rowconfigure(5, weight=0, minsize=100)  # Subtask panel
+    frame.rowconfigure(6, weight=0, minsize=40)  # PAUSED label
+    frame.rowconfigure(7, weight=0, minsize=20)  # Hint label
+    frame.rowconfigure(8, weight=0, minsize=20)  # Spacer (if needed)
 
     # 0: Session Type label
     tk.Label(
@@ -100,7 +101,7 @@ def render_home_screen(frame, manager):
         task_combo.focus_set()
         manager._just_cleared_task = False
 
-    # 5: Subtask panel (optional)
+    # 5: Subtask panel
     subtask_container = render_subtask_panel(frame, manager)
     subtask_container.grid(row=5, column=0, sticky="nsew")  # ✅ Move it down
 
@@ -109,8 +110,6 @@ def render_home_screen(frame, manager):
         q = manager.task_var.get().lower()
         matches = [t for t in manager.all_tasks if t.lower().startswith(q)]
         task_combo["values"] = matches[:6]
-
-    task_combo.bind("<KeyRelease>", _filter)
 
     #   Sessions spinbox
     tk.Label(
@@ -125,3 +124,42 @@ def render_home_screen(frame, manager):
         textvariable=manager.task_session_goal,
 
     ).grid(row=1, column=1, sticky="ew", padx=(0, 10), pady=5)
+
+    # Session Pause indicator
+    manager.paused_label = tk.Label(
+        frame,
+        text="PAUSED",
+        font=theme["paused_font"],
+        fg="black",
+        bg=theme["bg_color"]
+    )
+    manager.hint_label = tk.Label(
+        frame,
+        text="Choose a session and press Start",
+        font=theme["label_font"],
+        fg="#000000",
+        bg=theme["bg_color"]
+    )
+    task_combo.bind("<KeyRelease>", _filter)
+
+    def _flash_pause_label():
+        if not getattr(manager, "_flashing", False):
+            return
+        current = manager.paused_label.cget("fg")
+        next_color = theme["bg_color"] if current==theme["text_color"] else theme["text_color"]
+        manager.paused_label.config(fg=next_color)
+        manager.paused_label.after(500, _flash_pause_label)
+
+    def show_paused_state(message="Flashing Message Required"):
+        print("[DEBUG] show_paused_state called")
+        manager._flashing = True
+        manager.paused_label.grid(row=6, column=0, pady=(10, 2))
+        manager.hint_label.grid(row=7, column=0)
+        _flash_pause_label()
+
+    def clear_paused_state():
+        manager._flashing = False
+        manager.paused_label.grid_remove()
+        manager.hint_label.grid_remove()
+    manager.show_paused_state = show_paused_state
+    manager.clear_paused_state = clear_paused_state

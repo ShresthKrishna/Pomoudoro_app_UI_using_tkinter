@@ -22,5 +22,37 @@
   "2025-06-22": {
     "total_focus_minutes": 2.31,
     "sessions": 4
+  },
+  "2025-06-24": {
+    "total_focus_minutes": 0.0,
+    "sessions": 0
+  },
+  "2025-07-01": {
+    "total_focus_minutes": 1328.25,
+    "sessions": 1
+  },
+  "2025-07-29": {
+    "total_focus_minutes": 1840.23,
+    "sessions": 9
+  },
+  "2025-07-31": {
+    "total_focus_minutes": 127.62,
+    "sessions": 4
+  },
+  "2025-08-02": {
+    "total_focus_minutes": 130144.9,
+    "sessions": 3
+  },
+  "2025-08-03": {
+    "total_focus_minutes": 110344.51,
+    "sessions": 3
+  },
+  "2025-08-04": {
+    "total_focus_minutes": 110769.78,
+    "sessions": 1
+  },
+  "2025-08-05": {
+    "total_focus_minutes": 131.6,
+    "sessions": 2
   }
 }

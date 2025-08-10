@@ -16,6 +16,7 @@ class SessionSettings:
         for k in self.duration_vars:
             if k in saved:
                 self.duration_vars[k].set(saved[k])
+        self.auto_session_switch =True
 
     def save_settings(self):
         save_user_settings({k: self.duration_vars[k].get() for k in self.duration_vars})

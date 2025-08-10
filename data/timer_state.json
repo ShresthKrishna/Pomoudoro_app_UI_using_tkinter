@@ -1,0 +1,14 @@
+{
+  "active": true,
+  "session_type": "Work",
+  "remaining_seconds": 92,
+  "session_counts": {
+    "Work": 13,
+    "Short Break": 13,
+    "Long Break": 0
+  },
+  "task": "asdasdasdweqweqwetreh s",
+  "task_sessions_remaining": 1,
+  "timestamp": "2025-08-04T23:08:07.167131",
+  "interrupted": true
+}

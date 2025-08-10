@@ -2,6 +2,7 @@ theme = {
     "bg_color": '#f7f5dd',
     "button_color": "#9bdeac",
     "font_name": "Courier",
+    "text_color": '#ffffff',
     "button_font": ("Courier", 12, "bold"),
     "label_font": ("Courier", 14),
     "timer_font": ("Courier", 36, "bold"),
@@ -16,28 +17,29 @@ theme = {
         "bg": "#4CAF50",
         "fg": "#FFFFFF"
     },
+    "paused_font": ("Helvetica", 28, "bold"),
     "button_end":{
         "bg": "#D32F2f",
         "fg": "#FFFFFF"
     },
     "entry_font": ("Segoe UI", 10),
-"heading_font": ("Courier", 18, "bold"),
-"subheading_font": ("Courier", 14, "italic"),
-"chart_title_font": ("Courier", 13, "bold italic"),
+    "heading_font": ("Courier", 28, "bold"),
+    "subheading_font": ("Courier", 14, "italic"),
+    "chart_title_font": ("Courier", 13, "bold italic"),
 
-"section_bg": "#fffce8",
-"highlight_bg": "#fffae5",
+    "section_bg": "#fffce8",
+    "highlight_bg": "#fffae5",
 
-"shadow_style": {
-    "offset": (2, 2),
-    "blur": 6,
-    "color": "#ccc"
-},
+    "shadow_style": {
+        "offset": (2, 2),
+        "blur": 6,
+        "color": "#ccc"
+    },
 
-"cta_button": {
-    "bg": "#1976D2",
-    "fg": "#FFFFFF",
-    "hover_bg": "#1565C0"
-}
+    "cta_button": {
+        "bg": "#1976D2",
+        "fg": "#FFFFFF",
+        "hover_bg": "#1565C0"
+    }
 
-}
+    }
